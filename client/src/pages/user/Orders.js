@@ -12,6 +12,10 @@ const Orders = () => {
   const getOrders = async () => {
     try {
       const { data } = await axios.get("/api/v1/auth/orders");
+
+      if (data?.length === 0) {
+        toast.success("No orders found");
+      }
       setOrders(data);
     } catch (error) {
       console.log(error);
@@ -50,7 +54,7 @@ const Orders = () => {
                         <td>{i + 1}</td>
                         <td>{o?.status}</td>
                         <td>{o?.buyer?.name}</td>
-                        <td>{moment(o?.createAt).fromNow()}</td>
+                        <td>{moment(o?.createdAt).fromNow()}</td>
                         <td>{o?.payment.success ? "Success" : "Failed"}</td>
                         <td data-testid = "order-quantity">{o?.products?.length}</td>
                       </tr>

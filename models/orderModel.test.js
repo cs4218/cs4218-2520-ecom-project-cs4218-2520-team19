@@ -30,6 +30,11 @@ describe("Order Model Test Suite", () => {
         }
     });
 
+    test("it ensures status is set to default when not provided", () => {
+        const order = new Order();
+        expect(order.status).toBe("Not Processed");
+    });
+
     test("throws error for invalid status value", () => {
         const invalidOrder = new Order({ status: "InvalidStatus" });
         const validationError = invalidOrder.validateSync();
@@ -44,5 +49,10 @@ describe("Order Model Test Suite", () => {
     test("products field should reference 'Products' collection", () => {
         const order = new Order();
         expect(order.schema.paths.products.caster.options.ref).toBe("Products");
+    });
+
+    test("timestamps should be enabled", () => {
+        const order = new Order();
+        expect(order.schema.options.timestamps).toBe(true);
     });
 });

@@ -115,20 +115,19 @@ describe('When orders are present all details are rendered correctly', () => {
 
     // Mock the axios.get method before each test in this suite
     beforeEach(() => {
-
         // Arrange: Mock axios.get to return mockOrders
         jest.clearAllMocks();
         axios.get.mockResolvedValueOnce({data: mockOrders});
 
+    });
+
+    test("render product names", async () => {
         // Act: Render the Orders component
         render(
             <MemoryRouter>
                 <Orders/>
             </MemoryRouter>
         );
-    });
-
-    test("render product names", async () => {
         // Assert: Check if product names are rendered
         await waitFor(() => {
             expect(screen.getByText("Product 1")).toBeInTheDocument();
@@ -138,6 +137,12 @@ describe('When orders are present all details are rendered correctly', () => {
     });
 
     test("render buyer name", async () => {
+        // Act: Render the Orders component
+        render(
+            <MemoryRouter>
+                <Orders/>
+            </MemoryRouter>
+        );
         // Assert: Check if buyer name is rendered
         await waitFor(() => {
             expect(screen.getByText("John Doe")).toBeInTheDocument();
@@ -145,6 +150,12 @@ describe('When orders are present all details are rendered correctly', () => {
     });
 
     test("render order status", async () => {
+        // Act: Render the Orders component
+        render(
+            <MemoryRouter>
+                <Orders/>
+            </MemoryRouter>
+        );
         // Assert: Check if order status is rendered
         await waitFor(() => {
             expect(screen.getByText("Delivered")).toBeInTheDocument();
@@ -152,14 +163,25 @@ describe('When orders are present all details are rendered correctly', () => {
     });
 
     test("render success payment status", async () => {
+        // Act: Render the Orders component
+        render(
+            <MemoryRouter>
+                <Orders/>
+            </MemoryRouter>
+        );
         // Assert: Check if payment status is rendered
         await waitFor(() => {
             expect(screen.getByText("Success")).toBeInTheDocument();
         });
     });
 
-
     test("render product quantities", async () => {
+        // Act: Render the Orders component
+        render(
+            <MemoryRouter>
+                <Orders/>
+            </MemoryRouter>
+        );
         await waitFor(() => {
             // Assert that product quantity is rendered
             expect(screen.getByTestId("order-quantity")).toHaveTextContent("3");
@@ -167,6 +189,12 @@ describe('When orders are present all details are rendered correctly', () => {
     });
 
     test("render product prices", async () => {
+        // Act: Render the Orders component
+        render(
+            <MemoryRouter>
+                <Orders/>
+            </MemoryRouter>
+        );
         await waitFor(() => {
             // Assert that product prices are rendered
             expect(screen.getByText("Price : 100")).toBeInTheDocument();
@@ -176,6 +204,12 @@ describe('When orders are present all details are rendered correctly', () => {
     });
 
     test("render time created correctly", async () => {
+        // Act: Render the Orders component
+        render(
+            <MemoryRouter>
+                <Orders/>
+            </MemoryRouter>
+        );
         await waitFor(() => {
             // Assert that time created is rendered (using fromNow format)
             const formatted  = moment(mockOrders[0].createdAt).fromNow();
@@ -184,6 +218,12 @@ describe('When orders are present all details are rendered correctly', () => {
     });
 
     test("render product images", async () => {
+        // Act: Render the Orders component
+        render(
+            <MemoryRouter>
+                <Orders/>
+            </MemoryRouter>
+        );
         await waitFor(() => {
             // Check if images are rendered with correct src attributes
             const img1 = screen.getByAltText("Product 1");
@@ -210,15 +250,15 @@ describe('Orders Component Headers are rendered correctly', () => {
         jest.clearAllMocks();
         axios.get.mockResolvedValueOnce({data: mockOrders});
 
+    });
+
+    test("render col #", async () => {
         // Act: Render the Orders component
         render(
             <MemoryRouter>
                 <Orders/>
             </MemoryRouter>
         );
-    });
-
-    test("render col #", async () => {
         await waitFor(() => {
             // Assert: Check if column header "#" is rendered
             expect(screen.getByText("#")).toBeInTheDocument();
@@ -226,6 +266,12 @@ describe('Orders Component Headers are rendered correctly', () => {
     });
 
     test("render col Status", async () => {
+        // Act: Render the Orders component
+        render(
+            <MemoryRouter>
+                <Orders/>
+            </MemoryRouter>
+        );
         await waitFor(() => {
             // Assert: Check if column header "Status" is rendered
             expect(screen.getByText("Status")).toBeInTheDocument();
@@ -233,6 +279,12 @@ describe('Orders Component Headers are rendered correctly', () => {
     });
 
     test("render col buyer", async () => {
+        // Act: Render the Orders component
+        render(
+            <MemoryRouter>
+                <Orders/>
+            </MemoryRouter>
+        );
         await waitFor(() => {
             // Assert: Check if column header "Buyer" is rendered
             expect(screen.getByText("Buyer")).toBeInTheDocument();
@@ -240,6 +292,12 @@ describe('Orders Component Headers are rendered correctly', () => {
     });
 
     test("render col date", async () => {
+        // Act: Render the Orders component
+        render(
+            <MemoryRouter>
+                <Orders/>
+            </MemoryRouter>
+        );
         await waitFor(() => {
             // Assert: Check if column header "Date" is rendered
             expect(screen.getByText("Date")).toBeInTheDocument();
@@ -247,6 +305,12 @@ describe('Orders Component Headers are rendered correctly', () => {
     });
 
     test("render col payment", async () => {
+        // Act: Render the Orders component
+        render(
+            <MemoryRouter>
+                <Orders/>
+            </MemoryRouter>
+        );
         await waitFor(() => {
             // Assert: Check if column header "Payment" is rendered
             expect(screen.getByText("Payment")).toBeInTheDocument();
@@ -254,6 +318,12 @@ describe('Orders Component Headers are rendered correctly', () => {
     });
 
     test("render col Quantity", async () => {
+        // Act: Render the Orders component
+        render(
+            <MemoryRouter>
+                <Orders/>
+            </MemoryRouter>
+        );
         await waitFor(() => {
             // Assert: Check if column header "Quantity" is rendered
             expect(screen.getByText("Quantity")).toBeInTheDocument();

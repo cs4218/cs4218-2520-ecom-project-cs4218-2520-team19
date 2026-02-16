@@ -6,81 +6,82 @@ import userModel from '../models/userModel.js';
 jest.mock('jsonwebtoken');
 jest.mock('../models/userModel.js');
 
-describe('requireSignIn tests', () => {
-    const res = {};
-    const next = jest.fn();
-    // Random JWT Payload is set here
-    const jwtPayload = {
-        userId: '123',
+let res, req, next, consoleLogSpy;
+
+beforeEach(() => {
+    res = {
+        status: jest.fn().mockReturnThis(),
+        send: jest.fn(),
     };
+    req = {
+        headers: {authorization: 'stubToken'},
+        user: {},
+    };
+    next = jest.fn();
+    consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(() => {})
+});
 
-    afterEach(() => {
-        jest.clearAllMocks();
-    });
+afterEach(() => {
+    jest.clearAllMocks();
+    jest.restoreAllMocks();
+});
 
+describe('requireSignIn tests', () => {
     it('sets req.user and calls next upon successful jwt verification', async () => {
-        const req = {
-            headers: {authorization: 'validToken'},
+        // Random JWT Payload is set here
+        const jwtPayload = {
+            userId: '123',
         };
         JWT.verify.mockReturnValueOnce(jwtPayload);
 
         await requireSignIn(req, res, next);
 
-        expect(JWT.verify).toHaveBeenCalledWith('validToken', process.env.JWT_SECRET);
+        expect(JWT.verify).toHaveBeenCalledWith('stubToken', process.env.JWT_SECRET);
         expect(req.user).toEqual(jwtPayload);
         expect(next).toHaveBeenCalled();
     });
     
     it('throws an error and does not call next upon unsuccessful jwt verification', async () => {
-        console.log = jest.fn();
-        const req = {
-            headers: {authorization: 'invalidToken'},
-        };
-        const error = new Error('Invalid token');
+        const error = new Error('unsuccessful verification');
         JWT.verify.mockImplementationOnce(() => {
             throw error;
         });
 
         await requireSignIn(req, res, next);
         
-        expect(JWT.verify).toHaveBeenCalledWith('invalidToken', process.env.JWT_SECRET);
-        expect(console.log).toHaveBeenCalledTimes(1); // The error case calls console.log(error) once
-        expect(console.log.mock.calls[0][0].message).toEqual(error.message);
+        expect(JWT.verify).toHaveBeenCalledWith('stubToken', process.env.JWT_SECRET);
+        expect(consoleLogSpy).toHaveBeenCalledWith(error);
+        expect(res.status).toHaveBeenCalledWith(401);
+        expect(res.send).toHaveBeenCalledWith({
+            success: false,
+            error,
+            message: "Error in require sign in middleware",
+        });
         expect(next).not.toHaveBeenCalled();
     });
 });
 
 describe('isAdmin tests', () => {
-    const userId = '123';
-    const req = {
-        user: {_id: userId},
-    };
-    const next = jest.fn();
-
-    afterEach(() => {
-        jest.clearAllMocks();
+    const mockUser = {_id: '123'};
+    beforeEach(() => {
+        req.user = mockUser;
     });
 
     it('should allow admin to pass', async () => {
-        const res = {};
         userModel.findById.mockResolvedValue({role: 1});
 
         await isAdmin(req, res, next);
 
-        expect(userModel.findById).toHaveBeenCalledWith(userId);
+        expect(userModel.findById).toHaveBeenCalledWith('123');
         expect(next).toHaveBeenCalled();
     });
 
     it('should not allow non-admin to pass', async () => {
-        const res = {
-            status: jest.fn().mockReturnThis(),
-            send: jest.fn(),
-        };
         userModel.findById.mockResolvedValue({role: 0});
         
         await isAdmin(req, res, next);
 
-        expect(userModel.findById).toHaveBeenCalledWith(userId);
+        expect(userModel.findById).toHaveBeenCalledWith('123');
         expect(res.status).toHaveBeenCalledWith(401);
         expect(res.send).toHaveBeenCalledWith({
                 success: false,
@@ -90,19 +91,13 @@ describe('isAdmin tests', () => {
     });
 
     it('should produce an error response if user cannot be found', async () => {
-        const res = {
-            status: jest.fn().mockReturnThis(),
-            send: jest.fn(),
-        };
         const error = new Error('User cannot be found')
         userModel.findById.mockRejectedValue(error);
-        console.log = jest.fn();
 
         await isAdmin(req, res, next);
 
-        expect(userModel.findById).toHaveBeenCalledWith(userId);
-        expect(console.log).toHaveBeenCalledTimes(1);
-        expect(console.log.mock.calls[0][0].message).toEqual(error.message);
+        expect(userModel.findById).toHaveBeenCalledWith('123');
+        expect(consoleLogSpy).toHaveBeenCalledWith(error);
         expect(res.status).toHaveBeenCalledWith(401);
         expect(res.send).toHaveBeenCalledWith({
             success: false,

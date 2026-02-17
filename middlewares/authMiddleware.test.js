@@ -1,5 +1,5 @@
 // Teo Kim Han, A0273551E
-import { requireSignIn, isAdmin } from './authMiddleware';
+import { requireSignIn, isAdmin } from './authMiddleware.js';
 import JWT from 'jsonwebtoken';
 import userModel from '../models/userModel.js';
 

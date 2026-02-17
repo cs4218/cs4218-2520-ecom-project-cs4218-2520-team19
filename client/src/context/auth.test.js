@@ -2,7 +2,7 @@
 import React  from 'react';
 import axios from 'axios';
 import { useAuth, AuthProvider } from './auth';
-import { render, fireEvent, screen } from '@testing-library/react';
+import { render, fireEvent, screen, waitFor } from '@testing-library/react';
 
 const authUser = 'testUser123';
 const authToken = 'testToken123';
@@ -26,6 +26,10 @@ const TestChild = () => {
         </div>
 };
 
+afterEach(() => {
+    axios.defaults.headers.common['Authorization'] = '';
+});
+
 describe('Testing auth state', () => {
     beforeEach(() => {
         render(
@@ -40,11 +44,13 @@ describe('Testing auth state', () => {
         expect(screen.getByTestId('token').textContent).toBe('');
     });
     
-    it('should change when set', () => {
+    it('should change when set', async () => {
       fireEvent.click(screen.getByText('updateAuth'));
-    
-      expect(screen.getByTestId('user').textContent).toBe(authUser);
-      expect(screen.getByTestId('token').textContent).toBe(authToken);
+        
+      await waitFor(() => {
+          expect(screen.getByTestId('user').textContent).toBe(authUser);
+          expect(screen.getByTestId('token').textContent).toBe(authToken);
+      });
     });
 
 });
@@ -53,9 +59,9 @@ describe('Testing auth state when localStorage contains auth', () => {
     it('should not be null/empty when localStorage contains auth', () => {
         localStorage.setItem('auth', JSON.stringify(authStub));
         render(
-        <AuthProvider>
-            <TestChild />
-        </AuthProvider>
+            <AuthProvider>
+                <TestChild />
+            </AuthProvider>
         );
     
         expect(screen.getByTestId('user').textContent).toBe(authUser);
@@ -77,9 +83,11 @@ describe('Axios authorization header should be set', () => {
         expect(axios.defaults.headers.common["Authorization"]).toBe('');
     });
 
-    it('should be updated when auth changes', () => {
+    it('should be updated when auth changes', async () => {
         fireEvent.click(screen.getByText('updateAuth'));
 
-        expect(axios.defaults.headers.common["Authorization"]).toBe(authToken);
+        await waitFor(() =>
+            expect(axios.defaults.headers.common["Authorization"]).toBe(authToken)
+        );
     });
 });

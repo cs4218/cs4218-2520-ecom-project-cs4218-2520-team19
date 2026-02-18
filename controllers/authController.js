@@ -180,6 +180,11 @@ export const updateProfileController = async (req, res) => {
       return res.json({ error: "Password is required and should be 6 characters long" });
     }
 
+    //phone should be numeric
+    if (phone && isNaN(phone)) {
+      return res.json({ error: "Phone number should be numeric" });
+    }
+
     const hashedPassword = password ? await hashPassword(password) : undefined;
     const updatedUser = await userModel.findByIdAndUpdate(
       req.user._id,

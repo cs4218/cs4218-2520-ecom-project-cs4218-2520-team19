@@ -1,3 +1,5 @@
+// Varatharaju Mithuna, A0281223N
+
 import React from 'react';
 import '@testing-library/jest-dom/extend-expect';
 import Profile from './Profile';
@@ -62,33 +64,38 @@ describe("Profile Component mounting", () => {
             setAuthUser(mockUser);
     });
 
-    test("renders profile form with needed fields", () => {
+    test("renders profile form with needed fields", async () => {
         axios.get.mockResolvedValueOnce({data: {user: mockUser}});
-        const { getByText, getByDisplayValue } = render(
+        const { getByText } = render(
             <MemoryRouter>
                 <Profile />
             </MemoryRouter>
         );
 
-        expect(getByText("USER PROFILE")).toBeInTheDocument();
-        expect(screen.getByPlaceholderText("Enter Your Name")).toBeInTheDocument();
-        expect(screen.getByPlaceholderText("Enter Your Email")).toBeInTheDocument();
-        expect(screen.getByPlaceholderText("Enter Your Password")).toBeInTheDocument();
-        expect(screen.getByPlaceholderText("Enter Your Phone")).toBeInTheDocument();
-        expect(screen.getByPlaceholderText("Enter Your Address")).toBeInTheDocument();
+        await waitFor(() => {
+            expect(getByText("USER PROFILE")).toBeInTheDocument();
+            expect(screen.getByPlaceholderText("Enter Your Name")).toBeInTheDocument();
+            expect(screen.getByPlaceholderText("Enter Your Email")).toBeInTheDocument();
+            expect(screen.getByPlaceholderText("Enter Your Password")).toBeInTheDocument();
+            expect(screen.getByPlaceholderText("Enter Your Phone")).toBeInTheDocument();
+            expect(screen.getByPlaceholderText("Enter Your Address")).toBeInTheDocument();
+        });
     });
 
-    test("inputs should initially contain user data from context", () => {
+    test("inputs should initially contain user data from context", async () => {
         axios.get.mockResolvedValueOnce({data: {user: mockUser}});
-        const {getByDisplayValue } = render(
+        const {getByDisplayValue} = render(
             <MemoryRouter>
-                <Profile />
+                <Profile/>
             </MemoryRouter>
         );
-        expect(getByDisplayValue("John Doe")).toBeInTheDocument();
-        expect(getByDisplayValue("John@gmail.com")).toBeInTheDocument();
-        expect(getByDisplayValue("1234567890")).toBeInTheDocument();
-        expect(getByDisplayValue("123 Street")).toBeInTheDocument();
+
+        await waitFor(() => {
+            expect(getByDisplayValue("John Doe")).toBeInTheDocument();
+            expect(getByDisplayValue("John@gmail.com")).toBeInTheDocument();
+            expect(getByDisplayValue("1234567890")).toBeInTheDocument();
+            expect(getByDisplayValue("123 Street")).toBeInTheDocument();
+        });
     });
 });
 
@@ -98,7 +105,7 @@ describe ("Profile Component interactions", () => {
         setAuthUser(mockUser);
     });
 
-    test("allows user to type in the input fields", () => {
+    test("allows user to type in the input fields", async () => {
         axios.get .mockResolvedValueOnce({data: {user: mockUser}});
         const {getByPlaceholderText} = render(
             <MemoryRouter>
@@ -110,30 +117,38 @@ describe ("Profile Component interactions", () => {
         fireEvent.change(getByPlaceholderText("Enter Your Phone"), {target: {value: "0987654321"}});
         fireEvent.change(getByPlaceholderText("Enter Your Address"), {target: {value: "456 Avenue"}});
 
-        expect(getByPlaceholderText("Enter Your Name").value).toBe("Jane Doe");
-        expect(getByPlaceholderText("Enter Your Password").value).toBe("newpassword123");
-        expect(getByPlaceholderText("Enter Your Phone").value).toBe("0987654321");
-        expect(getByPlaceholderText("Enter Your Address").value).toBe("456 Avenue");
+        await waitFor(() => {
+            expect(getByPlaceholderText("Enter Your Name").value).toBe("Jane Doe");
+            expect(getByPlaceholderText("Enter Your Password").value).toBe("newpassword123");
+            expect(getByPlaceholderText("Enter Your Phone").value).toBe("0987654321");
+            expect(getByPlaceholderText("Enter Your Address").value).toBe("456 Avenue");
+        });
     });
 
-    test("email input should be disabled", () => {
+    test("email input should be disabled", async () => {
         axios.get.mockResolvedValueOnce({data: {user: mockUser}});
         const {getByPlaceholderText} = render(
             <MemoryRouter>
                 <Profile/>
             </MemoryRouter>
         );
-        expect(getByPlaceholderText("Enter Your Email")).toBeDisabled();
+
+        await waitFor(() => {
+            expect(getByPlaceholderText("Enter Your Email")).toBeDisabled();
+        });
     });
 
-    test("password input should be empty initially", () => {
+    test("password input should be empty initially", async () => {
         axios.get.mockResolvedValueOnce({data: {user: mockUser}});
         const {getByPlaceholderText} = render(
             <MemoryRouter>
                 <Profile/>
             </MemoryRouter>
         );
-        expect(getByPlaceholderText("Enter Your Password").value).toBe("");
+
+        await waitFor(() => {
+            expect(getByPlaceholderText("Enter Your Password").value).toBe("");
+        });
     });
 
     test("updates auth context after successful profile update", async () => {
@@ -215,7 +230,7 @@ describe ("Profile Component interactions", () => {
         expect(toast.success).toHaveBeenCalledWith("Profile Updated Successfully");
     });
 
-        test("if field not provided, old value should be sent in the update request", async () => {
+    test("if some fields(partial) not updated old value should be sent in the update request", async () => {
         axios.put.mockResolvedValueOnce({data: {updatedUser: updatedUser}});
         axios.get.mockResolvedValueOnce({data: {user: mockUser}});
 
@@ -237,7 +252,7 @@ describe ("Profile Component interactions", () => {
         }));
     });
 
-    test("if no changes made, update should still succeed with old values", async () => {
+    test("if no changes made, update should still succeed with old input values", async () => {
         axios.put.mockResolvedValueOnce({data: {updatedUser: mockUser}});
         axios.get.mockResolvedValueOnce({data: {user: mockUser}});
 
@@ -313,15 +328,19 @@ test("updates form fields after auth user data changes, useEffect dependency tes
     );
 
     // rerender the component with updated user data in auth context
-    setAuthUser(updatedUser);
+    setAuthUser({...updatedUser, email: "John@gmail.com"});
     rerender(
         <MemoryRouter>
             <Profile />
         </MemoryRouter>
     );
 
-    expect(screen.getByPlaceholderText("Enter Your Name").value).toBe("Jane Doe");
-    expect(screen.getByPlaceholderText("Enter Your Phone").value).toBe("0987654321");
-    expect(screen.getByPlaceholderText("Enter Your Address").value).toBe("456 Avenue");
+    await waitFor(() => {
+
+        expect(screen.getByPlaceholderText("Enter Your Name").value).toBe("Jane Doe");
+        expect(screen.getByPlaceholderText("Enter Your Phone").value).toBe("0987654321");
+        expect(screen.getByPlaceholderText("Enter Your Address").value).toBe("456 Avenue");
+    });
 });
+
 

@@ -1,3 +1,5 @@
+// Varatharaju Mithuna, A0281223N
+
 import Order from "./orderModel.js";
 
 describe("Order Model Test Suite", () => {
@@ -16,10 +18,21 @@ describe("Order Model Test Suite", () => {
         expect(order.schema.paths).toHaveProperty("buyer");
     });
 
-    test("it should have a status field with default value 'Not Process'", () => {
+    test("it should have a status field with default value 'Not Processed'", () => {
         const order = new Order();
         expect(order.schema.paths).toHaveProperty("status");
-        expect(order.schema.paths.status.options.default).toBe("Not Process");
+        expect(order.schema.paths.status.options.default).toBe("Not Processed");
+    });
+
+    test("it should have an enum validator for status field", () => {
+        const order = new Order();
+        expect(order.schema.paths.status.options.enum).toEqual([
+            "Not Processed",
+            "Processing",
+            "Shipped",
+            "Delivered",
+            "Cancelled",
+        ]);
     });
 
     test("it should only allow valid status values", async () => {

@@ -20,14 +20,22 @@ jobs:
         uses: actions/setup-node@v5
         with:
           node-version: "24"
+          cache: "npm"
 
-      - name: Install dependencies
+      # Install backend dependencies (root)
+      - name: Install backend dependencies
         run: npm install
 
+      # Install frontend dependencies
       - name: Install client dependencies
-        run: |
-          cd client
-          npm install
+        working-directory: ./client
+        run: npm install
 
-      - name: Run Jest tests
-        run: npm run test:frontend
+      # Run backend tests
+      - name: Run backend tests
+        run: npm run test
+
+      # Run frontend tests
+      - name: Run frontend tests
+        working-directory: ./client
+        run: npm run test

@@ -274,6 +274,7 @@ describe ("Profile Component interactions", () => {
     });
 
     test("displays error message on database error during profile update", async () => {
+
         axios.put.mockResolvedValueOnce({data: {error: "Something went wrong"}});
         axios.get.mockResolvedValueOnce({data: {user: mockUser}});
 
@@ -295,6 +296,9 @@ describe ("Profile Component interactions", () => {
     });
 
     test("displays error message on network error during profile update", async () => {
+
+        const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() =>{});
+
         axios.put.mockRejectedValueOnce(new Error("Network Error"));
         axios.get.mockResolvedValueOnce({data: {user: mockUser}});
 
@@ -313,6 +317,8 @@ describe ("Profile Component interactions", () => {
 
         await waitFor(() => expect(axios.put).toHaveBeenCalled());
         expect(toast.error).toHaveBeenCalledWith("Something went wrong");
+
+        consoleSpy.mockRestore();
     });
 });
 

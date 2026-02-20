@@ -1,4 +1,5 @@
 // Teo Kim Han, A0273551E
+// Below are tests for Registration and Login feature (with ref to 4-Member Testing Scope)
 
 import { registerController } from "./authController";
 import userModel from "../models/userModel";

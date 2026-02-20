@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Layout from "./../../components/Layout";
 import axios from "axios";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import "../../styles/AuthStyles.css";
 import { useAuth } from "../../context/auth";
@@ -13,7 +13,6 @@ const Login = () => {
   
 
   const navigate = useNavigate();
-  const location = useLocation();
   
 
   // form function
@@ -25,7 +24,7 @@ const Login = () => {
         password,
       });
       if (res && res.data.success) {
-        toast.success(res.data && res.data.message, {
+        toast.success(res.data.message, {
             duration: 5000,
             icon: "🙏",
             style: {
@@ -39,13 +38,13 @@ const Login = () => {
             token: res.data.token,
         });
         localStorage.setItem("auth", JSON.stringify(res.data));
-        navigate(location.state || "/");
+        navigate("/");
       } else {
         toast.error(res.data.message);
       }
     } catch (error) {
       console.log(error);
-      toast.error("Something went wrong");
+      toast.error(error.message);
     }
   };
   return (

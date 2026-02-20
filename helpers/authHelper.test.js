@@ -16,6 +16,15 @@ describe('hashPassword tests', () => {
         ['function', () => 'password123'],
     ];
 
+    beforeEach(() => {
+        // to prevent console from being flooded with logs
+        jest.spyOn(console, 'log').mockImplementation(() => {});
+    });
+
+    afterEach(() => {
+        jest.restoreAllMocks();
+    });
+
     it('should hash a password properly', async () => {
         const hashedPassword = await hashPassword(password);
         const isSame = await bcrypt.compare(password, hashedPassword);

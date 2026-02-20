@@ -223,6 +223,8 @@ describe('getOrdersController', () => {
     });
     test('getOrdersController returns error on failure', async () => {
 
+        const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+
         // Stub the find method to throw an error
         orderModel.find.mockImplementation(() => {
             throw new Error('DB Error');
@@ -235,6 +237,8 @@ describe('getOrdersController', () => {
             success: false,
             message: "Error While Getting Orders",
         }));
+
+        consoleSpy.mockRestore();
     });
 });
 
@@ -272,6 +276,8 @@ describe('getAllOrdersController', () => {
     });
     test('getAllOrdersController returns error on failure', async () => {
 
+        const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+
         orderModel.find.mockImplementation(() => {
             throw new Error('DB Error');
         });
@@ -282,6 +288,8 @@ describe('getAllOrdersController', () => {
             success: false,
             message: "Error While Getting Orders",
         }));
+
+        consoleSpy.mockRestore();
     });
     test('getAllOrdersController returns empty array when no orders found', async () => {
 
@@ -382,6 +390,9 @@ describe('orderStatusController', () => {
     });
 
     test('orderStatusController returns error on failure', async () => {
+
+        const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+
         // Stub the findByIdAndUpdate method to throw error
         orderModel.findByIdAndUpdate = jest.fn().mockImplementation(() => {
             throw new Error('DB Error');
@@ -394,8 +405,13 @@ describe('orderStatusController', () => {
             success: false,
             message: "Error While Updating Order",
         }));
+
+        consoleSpy.mockRestore();
     });
     test('orderStatusController handles validation error thrown by model', async () => {
+
+        const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+
         const reqInvalid = {
             params: {orderId: 'order123'},
             body: {status: 'InvalidStatus'}
@@ -416,6 +432,8 @@ describe('orderStatusController', () => {
             success: false,
             message: "Error While Updating Order",
         }));
+
+        consoleSpy.mockRestore();
     });
 
     test('handles when order is not found', async () => {
@@ -492,6 +510,9 @@ describe('updateProfileController', () => {
         }));
     });
     test('updateProfileController returns error on failure', async() => {
+
+        const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+
         userModel.findById.mockImplementation(() => {
             throw new Error('DB Error');
         });
@@ -504,6 +525,8 @@ describe('updateProfileController', () => {
             success: false,
             message: "Error While Updating profile",
         }));
+
+        consoleSpy.mockRestore();
     });
 
     test('sends error if password = 5 characters and updateProfile not called', async() => {
@@ -597,6 +620,9 @@ describe('updateProfileController', () => {
     });
 
     test('fails gracefully if hashing password throws error', async() => {
+
+        const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+
         const hashingErrorReq = {
             user: {_id: 'user123'},
             body: {name: 'New Name', password: 'newpassword', phone: '1234567890', address: 'New Address'}
@@ -615,6 +641,8 @@ describe('updateProfileController', () => {
             success: false,
             message: "Error While Updating profile",
         }));
+
+        consoleSpy.mockRestore();
     });
 
     test('updateProfileController keeps existing values if all fields are not provided', async() => {

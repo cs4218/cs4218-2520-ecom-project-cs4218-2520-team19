@@ -120,6 +120,8 @@ describe('Orders mounting behavior', () =>  {
     });
 });
     test('renders failure message on fetch error', async () => {
+
+    const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() =>{});
     // Arrange: Stub axios.get to throw an error
     axios.get.mockRejectedValueOnce(new Error('Network Error'));
 
@@ -132,6 +134,8 @@ describe('Orders mounting behavior', () =>  {
         // Communication-based assertion to ensure error toast is shown
         expect(toast.error).toHaveBeenCalledWith('Something went wrong');
     });
+
+    consoleSpy.mockRestore();
 });
 });
 

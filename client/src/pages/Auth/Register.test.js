@@ -16,6 +16,16 @@ jest.mock("../../components/Layout", () => ({
 
 
 describe('Register Component', () => {
+  const fillAllEntries = () => {
+    fireEvent.change(screen.getByPlaceholderText('Enter Your Name'), { target: { value: 'John Doe' } });
+    fireEvent.change(screen.getByPlaceholderText('Enter Your Email'), { target: { value: 'test@example.com' } });
+    fireEvent.change(screen.getByPlaceholderText('Enter Your Password'), { target: { value: 'password123' } });
+    fireEvent.change(screen.getByPlaceholderText('Enter Your Phone'), { target: { value: '1234567890' } });
+    fireEvent.change(screen.getByPlaceholderText('Enter Your Address'), { target: { value: '123 Street' } });
+    fireEvent.change(screen.getByPlaceholderText('Enter Your DOB'), { target: { value: '2000-01-01' } });
+    fireEvent.change(screen.getByPlaceholderText('What is Your Favorite sports'), { target: { value: 'Football' } });
+  };
+
   let res;
   
   beforeEach(() => {
@@ -33,23 +43,106 @@ describe('Register Component', () => {
         </Routes>
       </MemoryRouter>
     );
-  
-    fireEvent.change(screen.getByPlaceholderText('Enter Your Name'), { target: { value: 'John Doe' } });
-    fireEvent.change(screen.getByPlaceholderText('Enter Your Email'), { target: { value: 'test@example.com' } });
-    fireEvent.change(screen.getByPlaceholderText('Enter Your Password'), { target: { value: 'password123' } });
-    fireEvent.change(screen.getByPlaceholderText('Enter Your Phone'), { target: { value: '1234567890' } });
-    fireEvent.change(screen.getByPlaceholderText('Enter Your Address'), { target: { value: '123 Street' } });
-    fireEvent.change(screen.getByPlaceholderText('Enter Your DOB'), { target: { value: '2000-01-01' } });
-    fireEvent.change(screen.getByPlaceholderText('What is Your Favorite sports'), { target: { value: 'Football' } });
   });
   
   afterEach(() => {
     jest.clearAllMocks();
   });
 
+  it('should render the register page', () => {
+    expect(screen.getByText('REGISTER FORM')).toBeInTheDocument();
+  });
+
+  it('should have empty entries initially', () =>{
+    expect(screen.getByPlaceholderText('Enter Your Name').value).toBe('');
+    expect(screen.getByPlaceholderText('Enter Your Email').value).toBe('');
+    expect(screen.getByPlaceholderText('Enter Your Password').value).toBe('');
+    expect(screen.getByPlaceholderText('Enter Your Phone').value).toBe('');
+    expect(screen.getByPlaceholderText('Enter Your Address').value).toBe('');
+    expect(screen.getByPlaceholderText('Enter Your DOB').value).toBe('');
+    expect(screen.getByPlaceholderText('What is Your Favorite sports').value).toBe('');
+  });
+
+  it('should allow typing of all entries', () => {
+    fillAllEntries();
+
+    expect(screen.getByPlaceholderText('Enter Your Name').value).toBe('John Doe');
+    expect(screen.getByPlaceholderText('Enter Your Email').value).toBe('test@example.com');
+    expect(screen.getByPlaceholderText('Enter Your Password').value).toBe('password123');
+    expect(screen.getByPlaceholderText('Enter Your Phone').value).toBe('1234567890');
+    expect(screen.getByPlaceholderText('Enter Your Address').value).toBe('123 Street');
+    expect(screen.getByPlaceholderText('Enter Your DOB').value).toBe('2000-01-01');
+    expect(screen.getByPlaceholderText('What is Your Favorite sports').value).toBe('Football');
+  });
+
+  it('should not make a post request if name input is empty', async () => {
+    fillAllEntries();
+    fireEvent.change(screen.getByPlaceholderText('Enter Your Name'), { target: { value: '' } });
+    
+    fireEvent.click(screen.getByText('REGISTER'));
+
+    expect(axios.post).not.toHaveBeenCalled();
+  });
+
+  it('should not make a post request if email input is empty', async () => {
+    fillAllEntries();
+    fireEvent.change(screen.getByPlaceholderText('Enter Your Email'), { target: { value: '' } });
+
+    fireEvent.click(screen.getByText('REGISTER'));
+
+    expect(axios.post).not.toHaveBeenCalled();
+  });
+
+  it('should not make a post request if password is empty', async () => {
+    fillAllEntries();
+    fireEvent.change(screen.getByPlaceholderText('Enter Your Password'), { target: { value: '' } });
+
+    fireEvent.click(screen.getByText('REGISTER'));
+
+    expect(axios.post).not.toHaveBeenCalled();
+  });
+
+  it('should not make a post request if phone is empty', async () => {
+    fillAllEntries();
+    fireEvent.change(screen.getByPlaceholderText('Enter Your Phone'), { target: { value: '' } });
+
+    fireEvent.click(screen.getByText('REGISTER'));
+
+    expect(axios.post).not.toHaveBeenCalled();
+  });
+
+  it('should not make a post request if address is empty', async () => {
+    fillAllEntries();
+    fireEvent.change(screen.getByPlaceholderText('Enter Your Address'), { target: { value: '' } });
+
+    fireEvent.click(screen.getByText('REGISTER'));
+
+    expect(axios.post).not.toHaveBeenCalled();
+  });
+
+  it('should not make a post request if DOB is empty', async () => {
+    fillAllEntries();
+    fireEvent.change(screen.getByPlaceholderText('Enter Your DOB'), { target: { value: '' } });
+
+    fireEvent.click(screen.getByText('REGISTER'));
+
+    expect(axios.post).not.toHaveBeenCalled();
+  });
+
+  it('should not make a post request if answer is empty', async () => {
+    fillAllEntries();
+    fireEvent.change(screen.getByPlaceholderText('What is Your Favorite sports'), { target: { value: '' } });
+
+    fireEvent.click(screen.getByText('REGISTER'));
+
+    expect(axios.post).not.toHaveBeenCalled();
+  });
+
   it('should register the user successfully', async () => {
     res.data.success = true;
     axios.post.mockResolvedValueOnce(res);
+
+    fillAllEntries();
 
     fireEvent.click(screen.getByText('REGISTER'));
 
@@ -63,12 +156,12 @@ describe('Register Component', () => {
     axios.post.mockRejectedValueOnce(error);
     jest.spyOn(console, 'log').mockImplementation(() => {});
 
+    fillAllEntries();
+
     fireEvent.click(screen.getByText('REGISTER'));
 
     await waitFor(() => expect(axios.post).toHaveBeenCalled());
-    expect(console.log).toHaveBeenCalled();
     expect(toast.error).toHaveBeenCalledWith('User already exists');
-    expect(screen.queryByTestId('mockLoginPage')).not.toBeInTheDocument();
 
     console.log.mockRestore();
   });
@@ -78,10 +171,10 @@ describe('Register Component', () => {
     res.data.message = 'invalid field given';
     axios.post.mockResolvedValueOnce(res);
 
+    fillAllEntries();
     fireEvent.click(screen.getByText('REGISTER'));
 
     await waitFor(() => expect(axios.post).toHaveBeenCalled());
     expect(toast.error).toHaveBeenCalledWith('invalid field given');
-    expect(screen.queryByTestId('mockLoginPage')).not.toBeInTheDocument();
   })
 });

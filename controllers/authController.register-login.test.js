@@ -9,7 +9,7 @@ jest.mock('../models/userModel');
 jest.mock('../helpers/authHelper');
 
 describe('registerController tests', () => {
-    const userStub = {
+    const mockUser = {
         name: 'John',
         email: 'john@gmail.com',
         password: 'password123',
@@ -21,7 +21,7 @@ describe('registerController tests', () => {
     let req, res;
 
     beforeEach(() => {
-        req = { body: {...userStub} };
+        req = { body: {...mockUser} };
         res = {
             status: jest.fn().mockReturnThis(),
             send: jest.fn(),
@@ -34,20 +34,21 @@ describe('registerController tests', () => {
 
     describe('validation tests', () => {
         let invalidReqList = [];
-        const keys = Object.keys(userStub);
+        const keys = Object.keys(mockUser);
 
         for (let i = 0; i < keys.length; i++) {
             const newReq = { 
-                body: { ...userStub }
+                body: { ...mockUser }
             };
             newReq.body[keys[i]] = '';
             invalidReqList.push([keys[i], newReq]);
         }
 
-        it.each(invalidReqList)('should send an unsuccessful response due to empty %s',
+        it.each(invalidReqList)('should send a response with status code 400 due to empty %s',
             async (field, invalidReq) => {
                 await registerController(invalidReq, res);
 
+                expect(res.status).toHaveBeenCalledWith(400);
                 expect(res.send).toHaveBeenCalledWith({
                     success: false,
                     message: expect.stringMatching(new RegExp(field, 'i')),
@@ -57,7 +58,7 @@ describe('registerController tests', () => {
 
     it('should send a response with status code 409 if duplicate email exists', async () => {
         // Mock findOne to return an existing user
-        userModel.findOne.mockResolvedValue({...userStub}); 
+        userModel.findOne.mockResolvedValue({...mockUser}); 
 
         await registerController(req, res);
 
@@ -68,14 +69,40 @@ describe('registerController tests', () => {
         });
     });
 
-    it('should send a response with status code 201 if user register successfully', async () => {
-        userModel.findOne.mockResolvedValue(null); // no existing user
-        hashPassword.mockResolvedValue('stubHashedPw'); // successful hash
-        const updatedUserStub = {
-            ...userStub,
-            password: 'stubHashedPw'
+    it('should save the user with hashed password', async () => {
+        userModel.findOne.mockResolvedValueOnce(null); // no existing user
+        hashPassword.mockResolvedValue('hashedPassword'); // successful hash
+        const updatedMockUser = {
+            ...mockUser,
+            password: 'hashedPassword'
         };
-        const saveMock = jest.fn().mockResolvedValue(updatedUserStub);
+        const saveMock = jest.fn().mockResolvedValue(updatedMockUser);
+        // Mock userModel constructor
+        userModel.mockImplementation(() => {
+            return {save: saveMock}
+        });
+
+        await registerController(req, res);
+
+        expect(userModel).toHaveBeenCalledWith({
+            name: 'John',
+            email: 'john@gmail.com',
+            password: 'hashedPassword',
+            phone: '11112222',
+            address: 'hillview street 12',
+            answer: 'football',
+        });
+        expect(saveMock).toHaveBeenCalled();
+    });
+
+    it('should send a response with status code 201 if user register successfully', async () => {
+        userModel.findOne.mockResolvedValueOnce(null); // no existing user
+        hashPassword.mockResolvedValue('hashedPassword'); // successful hash
+        const updatedMockUser = {
+            ...mockUser,
+            password: 'hashedPassword'
+        };
+        const saveMock = jest.fn().mockResolvedValue(updatedMockUser);
         // Mock userModel constructor
         userModel.mockImplementation(() => {
             return {save: saveMock}
@@ -83,16 +110,15 @@ describe('registerController tests', () => {
         
         await registerController(req, res);
 
-        expect(saveMock).toHaveBeenCalled(); // ensure userModel save is called
         expect(res.status).toHaveBeenCalledWith(201);
         expect(res.send).toHaveBeenCalledWith({
             success: true,
             message: expect.any(String),
-            user: updatedUserStub,
+            user: updatedMockUser,
         });
     });
     
-    it('should send a response with status code 500 if an error occured', async () => {
+    it('should send a response with status code 500 if an error occurred', async () => {
         jest.spyOn(console, 'log').mockImplementation(() => {});
         const error = new Error('No connection to database');
         userModel.findOne.mockRejectedValue(error);

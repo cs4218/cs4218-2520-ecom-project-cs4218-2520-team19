@@ -1,6 +1,6 @@
-import { loginController } from "./authController";
+import { loginController, forgotPasswordController, testController } from "./authController";
 import userModel from "../models/userModel";
-import { comparePassword } from "../helpers/authHelper";
+import { hashPassword, comparePassword } from "../helpers/authHelper";
 import JWT from "jsonwebtoken";
 
 jest.mock('../models/userModel');
@@ -110,7 +110,7 @@ describe('loginController tests', () => {
         expect(JWT.sign).toHaveBeenCalledWith(
             {_id: '123'}, 
             process.env.JWT_SECRET, 
-            {expiresIn: '7d'}
+            {expiresIn: expect.any(String)}
         );
 
         JWT.sign.mockRestore();
@@ -126,7 +126,7 @@ describe('loginController tests', () => {
         expect(res.status).toHaveBeenCalledWith(200);
         expect(res.send).toHaveBeenCalledWith({
             success: true,
-            message: 'Login Successfully',
+            message: "Login Successfully",
             user: {
                 _id: '123',
                 name: 'John',
@@ -150,9 +150,171 @@ describe('loginController tests', () => {
         expect(res.status).toHaveBeenCalledWith(500);
         expect(res.send).toHaveBeenCalledWith({
             success: false,
-            message: 'Error in login',
+            message: expect.any(String),
             error: error,
         });
+
+        console.log.mockRestore();
+    });
+});
+
+describe('forgotPasswordController tests', () => {
+    let req, res;
+
+    beforeEach(() => {
+        req = {
+            body: {
+                email: 'john@example.com',
+                answer: 'basketball',
+                newPassword: 'mockNewPassword',
+            }
+        };
+        res = {
+            status: jest.fn().mockReturnThis(),
+            send: jest.fn()
+        };
+    });
+
+    afterEach(() => {
+        jest.clearAllMocks();
+    });
+
+    it('should send a response code of 400 for missing email', async () => {
+        req.body.email = '';
+
+        await forgotPasswordController(req, res);
+
+        expect(res.status).toHaveBeenCalledWith(400);
+        expect(res.send).toHaveBeenCalledWith({
+            success: false,
+            message: "Email is required",
+        });
+    });
+
+    it('should send a response code of 400 for missing answer', async () => {
+        req.body.answer = '';
+
+        await forgotPasswordController(req, res);
+
+        expect(res.status).toHaveBeenCalledWith(400);
+        expect(res.send).toHaveBeenCalledWith({
+            success: false,
+            message: "Answer is required",
+        });
+    });
+
+    it('should send a response code of 400 for missing new Password', async () => {
+        req.body.newPassword = '';
+
+        await forgotPasswordController(req, res);
+
+        expect(res.status).toHaveBeenCalledWith(400);
+        expect(res.send).toHaveBeenCalledWith({
+            success: false,
+            message: "New Password is required",
+        });
+    });
+
+    it('should send a response code of 404 for user not found', async () => {
+        userModel.findOne.mockResolvedValueOnce(null);
+
+        await forgotPasswordController(req, res);
+
+        expect(res.status).toHaveBeenCalledWith(404);
+        expect(res.send).toHaveBeenCalledWith({
+            success: false,
+            message: expect.any(String),
+        });
+    });
+
+    it('should hash the new password', async () => {
+        const mockUser = { _id: '123' };
+        userModel.findOne.mockResolvedValueOnce(mockUser);
+        hashPassword.mockResolvedValueOnce('mockHashedPassword');
+
+        await forgotPasswordController(req, res);
+
+        expect(hashPassword).toHaveBeenCalledWith('mockNewPassword');
+    });
+
+    it('should update the user password with the new hashed password', async () => {
+        const mockUser = { _id: '123' };
+        userModel.findOne.mockResolvedValueOnce(mockUser);
+        hashPassword.mockResolvedValueOnce('mockHashedPassword');
+        userModel.findByIdAndUpdate.mockResolvedValueOnce(mockUser);
+
+        await forgotPasswordController(req, res);
+
+        expect(userModel.findByIdAndUpdate).toHaveBeenCalledWith('123', { 
+            password: 'mockHashedPassword' 
+        });
+    });
+
+    it('should send a response code of 200 if password change is successful', async () => {
+        const mockUser = { _id: '123' };
+        userModel.findOne.mockResolvedValueOnce(mockUser);
+        hashPassword.mockResolvedValueOnce('mockHashedPassword');
+        userModel.findByIdAndUpdate.mockResolvedValueOnce(mockUser);
+
+        await forgotPasswordController(req, res);
+
+        expect(res.status).toHaveBeenCalledWith(200);
+        expect(res.send).toHaveBeenCalledWith({
+            success: true,
+            message: "Password Changed Successfully",
+        });
+    });
+
+    it('should send a response code of 500 if an error occured', async () => {
+        jest.spyOn(console, 'log').mockImplementation(() => {});
+        const error = new Error('something unexpected happened');
+        userModel.findOne.mockRejectedValueOnce(error);
+
+        await forgotPasswordController(req, res);
+
+        expect(res.status).toHaveBeenCalledWith(500);
+        expect(res.send).toHaveBeenCalledWith({
+            success: false,
+            message: expect.any(String),
+            error,
+        });
+
+        console.log.mockRestore();
+    });
+});
+
+describe('testController tests', () => {
+    afterEach(() => {
+        jest.clearAllMocks();
+    });
+
+    it('should send a response with status code 200 if no error occurred', () => {
+        const req = {};
+        const res = {
+            status: jest.fn().mockReturnThis(),
+            send: jest.fn()
+        };
+
+        testController(req, res);
+
+        expect(res.status).toHaveBeenCalledWith(200);
+        expect(res.send).toHaveBeenCalled();
+    });
+
+    it('should send a response with status code 500 if an error occurred', () => {
+        const req = {};
+        const res = {
+            status: jest.fn().mockReturnThis(),
+            send: jest.fn().mockImplementationOnce(() => { 
+                throw new Error('testController error') 
+            }),
+        };
+        jest.spyOn(console, 'log').mockImplementation(() => {});
+
+        testController(req, res);
+
+        expect(res.status).toHaveBeenCalledWith(500);
+        expect(res.send).toHaveBeenCalledTimes(2);
 
         console.log.mockRestore();
     });

@@ -1,0 +1,40 @@
+name: Run Tests
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: "24"
+          cache: "npm"
+
+      # Install backend dependencies (root)
+      - name: Install backend dependencies
+        run: npm install
+
+      # Install frontend dependencies
+      - name: Install client dependencies
+        working-directory: ./client
+        run: npm install
+
+      # Run backend tests
+      - name: Run backend tests
+        run: npm run test:backend
+
+      # Run frontend tests
+      - name: Run frontend tests
+        run: npm run test:frontend

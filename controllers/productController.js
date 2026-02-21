@@ -52,9 +52,11 @@ export const createProductController = async (req, res) => {
       products,
     });
   } catch (error) {
+    console.log(error);
     res.status(500).send({
       success: false,
-      error: "Error in creating product",
+      error,
+      message: "Error in creating product",
     });
   }
 };
@@ -75,6 +77,7 @@ export const getProductController = async (req, res) => {
       products,
     });
   } catch (error) {
+    console.log(error);
     res.status(500).send({
       success: false,
       message: "Error in getting products",
@@ -95,10 +98,11 @@ export const getSingleProductController = async (req, res) => {
       product,
     });
   } catch (error) {
+    console.log(error);
     res.status(500).send({
       success: false,
       message: "Error in getting single product",
-      error: error.message,
+      error,
     });
   }
 };
@@ -112,10 +116,11 @@ export const productPhotoController = async (req, res) => {
       return res.status(200).send(product.photo.data);
     }
   } catch (error) {
+    console.log(error);
     res.status(500).send({
       success: false,
       message: "Error in getting photo",
-      error: error.message,
+      error,
     });
   }
 };
@@ -129,6 +134,7 @@ export const deleteProductController = async (req, res) => {
       message: "Product Deleted Successfully",
     });
   } catch (error) {
+    console.log(error);
     res.status(500).send({
       success: false,
       message: "Error in deleting product",
@@ -180,7 +186,7 @@ export const updateProductController = async (req, res) => {
     console.log(error);
     res.status(500).send({
       success: false,
-      error: error.message,
+      error,
       message: "Error in updating product",
     });
   }
@@ -203,7 +209,7 @@ export const productFiltersController = async (req, res) => {
     res.status(400).send({
       success: false,
       message: "Error in filtering products",
-      error: error.message,
+      error,
     });
   }
 };
@@ -220,7 +226,7 @@ export const productCountController = async (req, res) => {
     console.log(error);
     res.status(400).send({
       message: "Error in counting products",
-      error: error.message,
+      error,
       success: false,
     });
   }
@@ -246,7 +252,7 @@ export const productListController = async (req, res) => {
     res.status(400).send({
       success: false,
       message: "Error in listing products per page",
-      error: error.message,
+      error,
     });
   }
 };
@@ -269,7 +275,7 @@ export const searchProductController = async (req, res) => {
     res.status(400).send({
       success: false,
       message: "Error in searching product",
-      error: error.message,
+      error,
     });
   }
 };
@@ -295,7 +301,7 @@ export const realtedProductController = async (req, res) => {
     res.status(400).send({
       success: false,
       message: "Error in geting related product",
-      error: error.message,
+      error,
     });
   }
 };
@@ -314,7 +320,7 @@ export const productCategoryController = async (req, res) => {
     console.log(error);
     res.status(400).send({
       success: false,
-      error: error.message,
+      error,
       message: "Error in getting products by category",
     });
   }

@@ -1,3 +1,5 @@
+// Thanakorn Pawirunsiri, A0266315E
+
 const {
   createProductController,
   getProductController,
@@ -44,12 +46,21 @@ const mockRes = () => {
   return res;
 };
 
+beforeAll(() => {
+  jest.clearAllMocks();
+  jest.spyOn(console, "log").mockImplementation(() => {});
+  jest.spyOn(console, "error").mockImplementation(() => {});
+});
+
+afterAll(() => {
+  console.log.mockRestore();
+  console.error.mockRestore();
+});
+
 describe("createProductController", () => {
   let saveMock;
 
   beforeEach(() => {
-    jest.clearAllMocks();
-
     saveMock = jest.fn();
     productModel.mockImplementation(() => ({
       save: saveMock,
@@ -263,10 +274,6 @@ describe("createProductController", () => {
 });
 
 describe("getProductController", () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
   it("should return products successfully", async () => {
     const mockProducts = [
       { _id: "1", name: "Product 1" },
@@ -329,10 +336,6 @@ describe("getProductController", () => {
 });
 
 describe("getSingleProductController", () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
   it("should return the product correctly", async () => {
     const mockProduct = { _id: "1", name: "Product 1", slug: "product-1" };
 
@@ -360,12 +363,14 @@ describe("getSingleProductController", () => {
   });
 
   it("should throw an error if an error is thrown", async () => {
+    const mockError = new Error("Something went wrong");
+
     productModel.mockImplementation(() => ({
       findOne: jest.fn(),
     }));
 
     productModel.findOne.mockImplementation(() => {
-      throw new Error("Something went wrong");
+      throw mockError;
     });
 
     const req = { params: { slug: "product-1" } };
@@ -377,16 +382,12 @@ describe("getSingleProductController", () => {
     expect(res.send).toHaveBeenCalledWith({
       success: false,
       message: "Error in getting single product",
-      error: "Something went wrong",
+      error: mockError,
     });
   });
 });
 
 describe("productPhotoController", () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
   it("should return product photo successfully", async () => {
     const mockPhotoBuffer = Buffer.from("fake-image-data");
 
@@ -413,12 +414,13 @@ describe("productPhotoController", () => {
   });
 
   it("should throw an error if an error is thrown", async () => {
+    const mockError = new Error("Something went wrong");
     productModel.mockImplementation(() => ({
       findById: jest.fn(),
     }));
 
     productModel.findById.mockImplementation(() => {
-      throw new Error("Something went wrong");
+      throw mockError;
     });
 
     const req = { params: { pid: 1 } };
@@ -430,16 +432,12 @@ describe("productPhotoController", () => {
     expect(res.send).toHaveBeenCalledWith({
       success: false,
       message: "Error in getting photo",
-      error: "Something went wrong",
+      error: mockError,
     });
   });
 });
 
 describe("deleteProductController", () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
   it("should delete product successfully", async () => {
     productModel.findByIdAndDelete = jest.fn().mockReturnValue({
       select: jest.fn().mockResolvedValue(true),
@@ -459,8 +457,10 @@ describe("deleteProductController", () => {
   });
 
   it("should throw an error if an error is thrown", async () => {
+    const mockError = new Error("Something went wrong");
+
     productModel.findByIdAndDelete = jest.fn().mockImplementation(() => {
-      throw new Error("Something went wrong");
+      throw mockError;
     });
 
     const req = { params: { pid: "123" } };
@@ -472,9 +472,7 @@ describe("deleteProductController", () => {
     expect(res.send).toHaveBeenCalledWith({
       success: false,
       message: "Error in deleting product",
-      error: expect.objectContaining({
-        message: "Something went wrong",
-      }),
+      error: mockError,
     });
   });
 });
@@ -484,8 +482,6 @@ describe("updateProductController", () => {
   let mockProduct;
 
   beforeEach(() => {
-    jest.clearAllMocks();
-
     saveMock = jest.fn();
     mockProduct = {
       save: saveMock,
@@ -683,9 +679,10 @@ describe("updateProductController", () => {
   });
 
   it("should return error if findByIdAndUpdate throws", async () => {
+    const mockError = new Error("Database Error");
     slugify.mockReturnValue("test-product");
     productModel.findByIdAndUpdate.mockImplementation(() => {
-      throw new Error("Database error");
+      throw mockError;
     });
 
     const req = {
@@ -707,17 +704,13 @@ describe("updateProductController", () => {
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.send).toHaveBeenCalledWith({
       success: false,
-      error: "Database error",
+      error: mockError,
       message: "Error in updating product",
     });
   });
 });
 
 describe("productFiltersController", () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
   it("should filter products by category only", async () => {
     const mockProducts = [
       { _id: "1", name: "Product 1", category: "cat1" },
@@ -834,8 +827,9 @@ describe("productFiltersController", () => {
   });
 
   it("should throw an error if an error is thrown", async () => {
+    const mockError = new Error("Database Error");
     productModel.find = jest.fn().mockImplementation(() => {
-      throw new Error("Database error");
+      throw mockError;
     });
 
     const req = {
@@ -853,16 +847,12 @@ describe("productFiltersController", () => {
     expect(res.send).toHaveBeenCalledWith({
       success: false,
       message: "Error in filtering products",
-      error: "Database error",
+      error: mockError,
     });
   });
 });
 
 describe("productCountController", () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
   it("should return product count successfully", async () => {
     const mockCount = 42;
 
@@ -884,8 +874,9 @@ describe("productCountController", () => {
   });
 
   it("should throw an error if an error is thrown", async () => {
+    const mockError = new Error("Database Error");
     productModel.find = jest.fn().mockImplementation(() => {
-      throw new Error("Database error");
+      throw mockError;
     });
 
     const req = {};
@@ -897,16 +888,12 @@ describe("productCountController", () => {
     expect(res.send).toHaveBeenCalledWith({
       success: false,
       message: "Error in counting products",
-      error: "Database error",
+      error: mockError,
     });
   });
 });
 
 describe("productListController", () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
   it("should return products for page 1 by default", async () => {
     const mockProducts = [
       { _id: "1", name: "Product 1" },
@@ -972,8 +959,9 @@ describe("productListController", () => {
   });
 
   it("should throw an error if an error is thrown", async () => {
+    const mockError = new Error("Database Error");
     productModel.find = jest.fn().mockImplementation(() => {
-      throw new Error("Database error");
+      throw mockError;
     });
 
     const req = { params: { page: 1 } };
@@ -985,16 +973,12 @@ describe("productListController", () => {
     expect(res.send).toHaveBeenCalledWith({
       success: false,
       message: "Error in listing products per page",
-      error: "Database error",
+      error: mockError,
     });
   });
 });
 
 describe("searchProductController", () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
   it("should search products by keyword successfully", async () => {
     const mockProducts = [
       { _id: "1", name: "Test Product", description: "A test product" },
@@ -1059,8 +1043,9 @@ describe("searchProductController", () => {
   });
 
   it("should throw an error if an error is thrown", async () => {
+    const mockError = new Error("Database Error");
     productModel.find = jest.fn().mockImplementation(() => {
-      throw new Error("Database error");
+      throw mockError;
     });
 
     const req = { params: { keyword: "test" } };
@@ -1076,16 +1061,12 @@ describe("searchProductController", () => {
     expect(res.send).toHaveBeenCalledWith({
       success: false,
       message: "Error in searching product",
-      error: "Database error",
+      error: mockError,
     });
   });
 });
 
 describe("realtedProductController", () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
   it("should return related products successfully", async () => {
     const mockProducts = [
       { _id: "2", name: "Related Product 1", category: "cat1" },
@@ -1151,8 +1132,9 @@ describe("realtedProductController", () => {
   });
 
   it("should throw an error if an error is thrown", async () => {
+    const mockError = new Error("Database Error");
     productModel.find = jest.fn().mockImplementation(() => {
-      throw new Error("Database error");
+      throw mockError;
     });
 
     const req = { params: { pid: "1", cid: "cat1" } };
@@ -1164,16 +1146,12 @@ describe("realtedProductController", () => {
     expect(res.send).toHaveBeenCalledWith({
       success: false,
       message: "Error in geting related product",
-      error: "Database error",
+      error: mockError,
     });
   });
 });
 
 describe("productCategoryController", () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
   it("should return products by category successfully", async () => {
     const mockCategory = {
       _id: "cat1",
@@ -1239,8 +1217,9 @@ describe("productCategoryController", () => {
   });
 
   it("should throw an error if an error is thrown", async () => {
+    const mockError = new Error("Database Error");
     categoryModel.findOne = jest.fn().mockImplementation(() => {
-      throw new Error("Database error");
+      throw mockError;
     });
 
     const req = { params: { slug: "electronics" } };
@@ -1252,7 +1231,7 @@ describe("productCategoryController", () => {
     expect(res.send).toHaveBeenCalledWith({
       success: false,
       message: "Error in getting products by category",
-      error: "Database error",
+      error: mockError,
     });
   });
 });

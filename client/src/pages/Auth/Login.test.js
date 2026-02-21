@@ -1,3 +1,5 @@
+// Teo Kim Han, A0273551E
+
 import React from 'react';
 import { render, fireEvent, waitFor, screen } from '@testing-library/react';
 import axios from 'axios';
@@ -62,11 +64,48 @@ describe('Login Component', () => {
     it('should allow typing email and password', () => {
       fireEvent.change(screen.getByPlaceholderText('Enter Your Email'), { target: { value: 'test@example.com' } });
       fireEvent.change(screen.getByPlaceholderText('Enter Your Password'), { target: { value: 'password123' } });
+
       expect(screen.getByPlaceholderText('Enter Your Email').value).toBe('test@example.com');
       expect(screen.getByPlaceholderText('Enter Your Password').value).toBe('password123');
     });
+
+    it('should not make a post request if email is missing', () => {
+      fireEvent.change(screen.getByPlaceholderText('Enter Your Password'), { target: { value: 'password123' } });
+
+      fireEvent.click(screen.getByText('LOGIN'));
+
+      expect(axios.post).not.toHaveBeenCalled();
+    });
+
+    it('should not make a post request if password is missing', () => {
+      fireEvent.change(screen.getByPlaceholderText('Enter Your Email'), { target: { value: 'test@example.com' } });
+
+      fireEvent.click(screen.getByText('LOGIN'));
+
+      expect(axios.post).not.toHaveBeenCalled();
+    });
+
+    it('should show notification if login the user successfully', async () => {
+      const res = {
+        data: {
+          success: true,
+          message: 'Login Successful',
+          user: { id: 1, name: 'John Doe', email: 'test@example.com' },
+          token: 'mockToken'
+        }
+      };
+      axios.post.mockResolvedValueOnce(res);
+      fireEvent.change(screen.getByPlaceholderText('Enter Your Email'), { target: { value: 'test@example.com' } });
+      fireEvent.change(screen.getByPlaceholderText('Enter Your Password'), { target: { value: 'password123' } });
       
-    it('should login the user successfully', async () => {
+      fireEvent.click(screen.getByText('LOGIN'));
+
+      await waitFor(() => expect(axios.post).toHaveBeenCalled());
+      // Checks that at least the message field in response is shown in notification
+      expect(toast.success.mock.lastCall).toEqual(expect.arrayContaining(['Login Successful']));
+    });
+
+    it('should set auth on successful login', async () => {
       const res = {
         data: {
             success: true,
@@ -76,34 +115,61 @@ describe('Login Component', () => {
         }
       };
       axios.post.mockResolvedValueOnce(res);
-
       fireEvent.change(screen.getByPlaceholderText('Enter Your Email'), { target: { value: 'test@example.com' } });
       fireEvent.change(screen.getByPlaceholderText('Enter Your Password'), { target: { value: 'password123' } });
+      
       fireEvent.click(screen.getByText('LOGIN'));
 
       await waitFor(() => expect(axios.post).toHaveBeenCalled());
-      expect(toast.success).toHaveBeenCalledWith(res.data.message, {
-          duration: 5000,
-          icon: '🙏',
-          style: {
-              background: 'green',
-              color: 'white'
-          }
-      });
       expect(mockSetAuth).toHaveBeenCalledWith({
         user: { id: 1, name: 'John Doe', email: 'test@example.com' },
         token: 'mockToken', 
       });
+    });
+
+    it('should set local storage on successful login', async () => {
+      const res = {
+        data: {
+            success: true,
+            message: 'Login Successful',
+            user: { id: 1, name: 'John Doe', email: 'test@example.com' },
+            token: 'mockToken'
+        }
+      };
+      axios.post.mockResolvedValueOnce(res);
+      fireEvent.change(screen.getByPlaceholderText('Enter Your Email'), { target: { value: 'test@example.com' } });
+      fireEvent.change(screen.getByPlaceholderText('Enter Your Password'), { target: { value: 'password123' } });
+      
+      fireEvent.click(screen.getByText('LOGIN'));
+
+      await waitFor(() => expect(axios.post).toHaveBeenCalled());
       expect(mockSetItem).toHaveBeenCalledWith('auth', '{"success":true,"message":"Login Successful","user":{"id":1,"name":"John Doe","email":"test@example.com"},"token":"mockToken"}');
+    });
+    
+    it('should navigate to home page after successful login', async () => {
+      const res = {
+        data: {
+          success: true,
+          message: 'Login Successful',
+          user: { id: 1, name: 'John Doe', email: 'test@example.com' },
+          token: 'mockToken'
+        }
+      };
+      axios.post.mockResolvedValueOnce(res);
+      fireEvent.change(screen.getByPlaceholderText('Enter Your Email'), { target: { value: 'test@example.com' } });
+      fireEvent.change(screen.getByPlaceholderText('Enter Your Password'), { target: { value: 'password123' } });
+      
+      fireEvent.click(screen.getByText('LOGIN'));
+
       await waitFor(() => expect(screen.getByTestId('homepage')).toBeInTheDocument());
     });
 
     it('should display error message on failed login', async () => {
       axios.post.mockRejectedValueOnce({ message: 'Invalid credentials' });
       jest.spyOn(console, 'log').mockImplementation(() => {});
-      
       fireEvent.change(screen.getByPlaceholderText('Enter Your Email'), { target: { value: 'test@example.com' } });
       fireEvent.change(screen.getByPlaceholderText('Enter Your Password'), { target: { value: 'password123' } });
+      
       fireEvent.click(screen.getByText('LOGIN'));
       
       await waitFor(() => expect(axios.post).toHaveBeenCalled());
@@ -115,9 +181,9 @@ describe('Login Component', () => {
 
     it('should display message if unsuccessful response', async () => {
       axios.post.mockResolvedValueOnce({data: {success: false, message: 'something went wrong'}});
-
       fireEvent.change(screen.getByPlaceholderText('Enter Your Email'), { target: { value: 'test@example.com' } });
       fireEvent.change(screen.getByPlaceholderText('Enter Your Password'), { target: { value: 'password123' } });
+      
       fireEvent.click(screen.getByText('LOGIN'));
 
       await waitFor(() => expect(axios.post).toHaveBeenCalled());

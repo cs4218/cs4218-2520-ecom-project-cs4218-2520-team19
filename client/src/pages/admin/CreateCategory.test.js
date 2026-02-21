@@ -22,6 +22,29 @@ describe("CreateCategory Component", () => {
         jest.clearAllMocks();
     });
 
+    it("handles submit successfully", () => {
+        axios.post.mockResolvedValue({ data: { success: true } });
+        const { getByText, getByPlaceholderText } = render(
+            <MemoryRouter initialEntries={['/admin/create-category']}>
+                <Routes>
+                    <Route path="/admin/create-category" element={<CreateCategory />} />
+                </Routes>
+            </MemoryRouter>
+        );
+
+        const nameInput = getByPlaceholderText("Enter Category Name");
+        fireEvent.change(nameInput, { target: { value: "Test Category" } });
+
+        const submitButton = getByText("Submit");
+        fireEvent.click(submitButton);
+
+        expect(axios.post).toHaveBeenCalledWith("/api/v1/category/create-category", {
+            name: "Test Category",
+        });
+        expect(toast.success).toHaveBeenCalledWith("Category Created Successfully");
+    });
+
+
     it ("renders CreateCategory component", () => {
         const { getByText } = render(
             <MemoryRouter initialEntries={['/admin/create-category']}>

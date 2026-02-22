@@ -33,9 +33,20 @@ describe("Product Model Test Suite", () => {
     expect(product.schema.paths).toHaveProperty("quantity");
   });
 
-  it("should have a photo field", () => {
+  it("should have a photo field with data and contentType", () => {
     const product = new Product();
-    expect(product.schema.paths).toHaveProperty("photo");
+    expect(product.schema.paths["photo.data"]).toBeDefined();
+    expect(product.schema.paths["photo.contentType"]).toBeDefined();
+  });
+
+  it("photo.data should be of type Buffer", () => {
+    const product = new Product();
+    expect(product.schema.paths["photo.data"].instance).toBe("Buffer");
+  });
+
+  it("photo.contentType should be of type String", () => {
+    const product = new Product();
+    expect(product.schema.paths["photo.contentType"].instance).toBe("String");
   });
 
   it("should have a shipping field", () => {

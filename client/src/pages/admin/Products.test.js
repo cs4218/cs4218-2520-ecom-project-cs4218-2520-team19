@@ -1,3 +1,5 @@
+// Thanakorn Pawirunsiri, A0266315E
+
 import { render, screen, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import Products from "./Products";

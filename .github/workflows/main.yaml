@@ -5,12 +5,12 @@ on:
     branches:
       - main
     paths-ignore:
-      - 'README.md'
+      - 'Readme.md'
   push:
     branches:
       - main
     paths-ignore:
-      - 'README.md'
+      - 'Readme.md'
 
 jobs:
   test:

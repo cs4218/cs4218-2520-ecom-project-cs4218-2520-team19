@@ -1,4 +1,5 @@
 // Varatharaju Mithuna, A0281223N
+// Below are tests for Order feature (with ref to 4-Member Testing Scope)
 
 jest.mock("../models/orderModel", () => ({
     find: jest.fn()

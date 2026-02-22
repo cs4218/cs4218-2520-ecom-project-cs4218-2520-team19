@@ -54,10 +54,9 @@ describe("CreateCategory Component", () => {
             expect(screen.getByText("Render Test 1")).toBeInTheDocument();
             expect(screen.getByText("Render Test 2")).toBeInTheDocument();
         });
-
     });
 
-    it("handles unsuccessful getting all category data", async () => {
+    it("handles getting all category data returning {success: false}", async () => {
         axios.get.mockResolvedValueOnce({
             data: { success: false, message: "Failed to fetch categories" }
         });
@@ -76,7 +75,7 @@ describe("CreateCategory Component", () => {
         });
     });
 
-    it("handles getting all category error", async () => {
+    it("handles error when getting all category", async () => {
         jest.spyOn(console, "log").mockImplementation(() => {});
 
         axios.get.mockRejectedValueOnce(new Error("Error in fetching categories"));
@@ -128,12 +127,10 @@ describe("CreateCategory Component", () => {
                 </Routes>
             </MemoryRouter>
         );
-
-        await waitFor(() => {
+        await waitFor(() => { // Waiting for async getAllCategory to finish, not part of test assertions
             expect(screen.getByText("Existing 1")).toBeInTheDocument();
             expect(screen.getByText("Existing 2")).toBeInTheDocument();
         });
-
         fireEvent.change(screen.getByPlaceholderText("Enter new category"), { target: { value: "New Category" } });
         fireEvent.click(getByText("Submit"));
 
@@ -147,7 +144,7 @@ describe("CreateCategory Component", () => {
         });
     });
 
-    it("handles unsuccessful category creation data", async () => {
+    it("handles creating category returning {success: false}", async () => {
         axios.get.mockResolvedValueOnce({
             data: { 
                 success: true, 
@@ -168,12 +165,10 @@ describe("CreateCategory Component", () => {
                 </Routes>
             </MemoryRouter>
         );
-
-        await waitFor(() => {
+        await waitFor(() => { // Waiting for async getAllCategory to finish, not part of test assertions
             expect(screen.getByText("Existing 1")).toBeInTheDocument();
             expect(screen.getByText("Existing 2")).toBeInTheDocument();
         });
-
         fireEvent.change(screen.getByPlaceholderText("Enter new category"), { target: { value: "New Category" } });
         fireEvent.click(getByText("Submit"));
 
@@ -186,7 +181,7 @@ describe("CreateCategory Component", () => {
         });
     });
 
-    it("handles category creation error", async () => {
+    it("handles error during category creation", async () => {
         jest.spyOn(console, "log").mockImplementation(() => {});
 
         axios.get.mockResolvedValueOnce({
@@ -207,6 +202,10 @@ describe("CreateCategory Component", () => {
                 </Routes>
             </MemoryRouter>
         );
+        await waitFor(() => { // Waiting for async getAllCategory to finish, not part of test assertions
+            expect(screen.getByText("Existing 1")).toBeInTheDocument();
+            expect(screen.getByText("Existing 2")).toBeInTheDocument();
+        });
         fireEvent.change(screen.getByPlaceholderText("Enter new category"), { target: { value: "New Category" } });
         fireEvent.click(getByText("Submit"));
 
@@ -238,12 +237,10 @@ describe("CreateCategory Component", () => {
                 </Routes>
             </MemoryRouter>
         );
-
-        await waitFor(() => {
+        await waitFor(() => { // Waiting for async getAllCategory to finish, not part of test assertions
             expect(screen.getByText("Modal Category")).toBeInTheDocument();
         });
         expect(screen.queryByDisplayValue("Modal Category")).not.toBeInTheDocument();
-
         fireEvent.click(getByText("Edit"));
 
         await waitFor(() => {
@@ -268,18 +265,14 @@ describe("CreateCategory Component", () => {
                 </Routes>
             </MemoryRouter>
         );
-
-        await waitFor(() => {
+        await waitFor(() => { // Waiting for async getAllCategory to finish, not part of test assertions
             expect(screen.getByText("Modal Category")).toBeInTheDocument();
         });
         expect(screen.queryByDisplayValue("Modal Category")).not.toBeInTheDocument();
-
         fireEvent.click(getByText("Edit"));
-
-        await waitFor(() => {
+        await waitFor(() => { // Waiting for modal to render, not part of test assertions
             expect(screen.getByDisplayValue("Modal Category")).toBeInTheDocument();
         });
-
         fireEvent.click(screen.getByRole("button", { name: "Close" }));
 
         await waitFor(() => {
@@ -318,16 +311,13 @@ describe("CreateCategory Component", () => {
                 </Routes>
             </MemoryRouter>
         );
-
-        await waitFor(() => {
+        await waitFor(() => { // Waiting for async getAllCategory to finish, not part of test assertions
             expect(screen.getByText("Old 1")).toBeInTheDocument();
             expect(screen.getByText("Old 2")).toBeInTheDocument();
         });
-
         const editButtons = screen.getAllByRole("button", { name: "Edit" });
         fireEvent.click(editButtons[0]);
-
-        await waitFor(() => {
+        await waitFor(() => { // Waiting for modal to render, not part of test assertions
             expect(screen.getByDisplayValue("Old 1")).toBeInTheDocument();
         });
         fireEvent.change(screen.getByDisplayValue("Old 1"), { target: { value: updatedCategory.name } });
@@ -343,7 +333,7 @@ describe("CreateCategory Component", () => {
         });
     });
 
-    it("Closes modal after successful update", async () => {
+    it("closes modal after successful update", async () => {
         const updatedCategory = { _id: "1", name: "Updated 1" };
         axios.get.mockResolvedValueOnce({
             data: { 
@@ -375,15 +365,13 @@ describe("CreateCategory Component", () => {
             </MemoryRouter>
         );
 
-        await waitFor(() => {
+        await waitFor(() => { // Waiting for async getAllCategory to finish, not part of test assertions
             expect(screen.getByText("Old 1")).toBeInTheDocument();
             expect(screen.getByText("Old 2")).toBeInTheDocument();
         });
-
         const editButtons = screen.getAllByRole("button", { name: "Edit" });
         fireEvent.click(editButtons[0]);
-
-        await waitFor(() => {
+        await waitFor(() => { // Waiting for modal to render, not part of test assertions
             expect(screen.getByDisplayValue("Old 1")).toBeInTheDocument();
         });
         fireEvent.change(screen.getByDisplayValue("Old 1"), { target: { value: updatedCategory.name } });
@@ -400,7 +388,7 @@ describe("CreateCategory Component", () => {
         });
     });
 
-    it("handles unsuccessful category update data", async () => {
+    it("handles updating category returning {success: false}", async () => {
         const updatedCategory = { _id: "1", name: "Updated 1" };
         axios.get.mockResolvedValueOnce({
             data: { 
@@ -422,15 +410,12 @@ describe("CreateCategory Component", () => {
                 </Routes>
             </MemoryRouter>
         );
-
-        await waitFor(() => {
+        await waitFor(() => { // Waiting for async getAllCategory to finish, not part of test assertions
             expect(screen.getByText("Old 1")).toBeInTheDocument();
         });
-
         const editButtons = screen.getAllByRole("button", { name: "Edit" });
         fireEvent.click(editButtons[0]);
-
-        await waitFor(() => {
+        await waitFor(() => { // Waiting for modal to render, not part of test assertions
             expect(screen.getByDisplayValue("Old 1")).toBeInTheDocument();
         });
         fireEvent.change(screen.getByDisplayValue("Old 1"), { target: { value: updatedCategory.name } });
@@ -444,7 +429,7 @@ describe("CreateCategory Component", () => {
         });
     });
 
-    it("handles category update error", async () => {
+    it("handles error during category update", async () => {
         jest.spyOn(console, "log").mockImplementation(() => {});
 
         const updatedCategory = { _id: "1", name: "Updated 1" };
@@ -466,15 +451,12 @@ describe("CreateCategory Component", () => {
                 </Routes>
             </MemoryRouter>
         );
-
-        await waitFor(() => {
+        await waitFor(() => { // Waiting for async getAllCategory to finish, not part of test assertions
             expect(screen.getByText("Old 1")).toBeInTheDocument();
         });
-
         const editButtons = screen.getAllByRole("button", { name: "Edit" });
         fireEvent.click(editButtons[0]);
-
-        await waitFor(() => {
+        await waitFor(() => { // Waiting for modal to render, not part of test assertions
             expect(screen.getByDisplayValue("Old 1")).toBeInTheDocument();
         });
         fireEvent.change(screen.getByDisplayValue("Old 1"), { target: { value: updatedCategory.name } });
@@ -519,12 +501,10 @@ describe("CreateCategory Component", () => {
                 </Routes>
             </MemoryRouter>
         );
-
-        await waitFor(() => {
+        await waitFor(() => { // Waiting for async getAllCategory to finish, not part of test assertions
             expect(screen.getByText("Delete 1")).toBeInTheDocument();
             expect(screen.getByText("Delete 2")).toBeInTheDocument();
         });
-
         const deleteButtons = screen.getAllByRole("button", { name: "Delete" });
         fireEvent.click(deleteButtons[0]);
 
@@ -537,7 +517,7 @@ describe("CreateCategory Component", () => {
         });
     });
 
-    it("handles unsuccessful category deletion data", async () => {
+    it("handles deleting category returning {success: false}", async () => {
         axios.get.mockResolvedValueOnce({
             data: { 
                 success: true, 
@@ -558,12 +538,10 @@ describe("CreateCategory Component", () => {
                 </Routes>
             </MemoryRouter>
         );
-
-        await waitFor(() => {
+        await waitFor(() => { // Waiting for async getAllCategory to finish, not part of test assertions
             expect(screen.getByText("Delete 1")).toBeInTheDocument();
             expect(screen.getByText("Delete 2")).toBeInTheDocument();
         });
-
         const deleteButtons = screen.getAllByRole("button", { name: "Delete" });
         fireEvent.click(deleteButtons[0]);
 
@@ -576,7 +554,7 @@ describe("CreateCategory Component", () => {
         });
     });
 
-    it("handles category deletion error", async () => {
+    it("handles error during category deletion", async () => {
         jest.spyOn(console, "log").mockImplementation(() => {});
 
         axios.get.mockResolvedValueOnce({
@@ -597,12 +575,10 @@ describe("CreateCategory Component", () => {
                 </Routes>
             </MemoryRouter>
         );
-
-        await waitFor(() => {
+        await waitFor(() => { // Waiting for async getAllCategory to finish, not part of test assertions
             expect(screen.getByText("Delete 1")).toBeInTheDocument();
             expect(screen.getByText("Delete 2")).toBeInTheDocument();
         });
-
         const deleteButtons = screen.getAllByRole("button", { name: "Delete" });
         fireEvent.click(deleteButtons[0]);
 

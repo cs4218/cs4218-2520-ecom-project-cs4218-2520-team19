@@ -67,6 +67,7 @@ const CreateCategory = () => {
         toast.error(data.message);
       }
     } catch (error) {
+      console.log(error); // Sun Zhiyuan Felix (A0272474Y) - add error logging for debugging
       toast.error("Something went wrong in updating category");
     }
   };
@@ -83,6 +84,7 @@ const CreateCategory = () => {
         toast.error(data.message);
       }
     } catch (error) {
+      console.log(error); // Sun Zhiyuan Felix (A0272474Y) - add error logging for debugging
       toast.error("Something went wrong in deleting category");
     }
   };

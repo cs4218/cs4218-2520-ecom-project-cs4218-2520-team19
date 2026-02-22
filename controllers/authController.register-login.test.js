@@ -124,7 +124,7 @@ describe('registerController tests', () => {
     it('should send a response with status code 500 if an error occurred', async () => {
         jest.spyOn(console, 'log').mockImplementation(() => {});
         const error = new Error('No connection to database');
-        userModel.findOne.mockRejectedValue(error);
+        userModel.findOne.mockRejectedValueOnce(error);
 
         await registerController(req, res);
 

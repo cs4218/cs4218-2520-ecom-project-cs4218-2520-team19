@@ -8,8 +8,6 @@ export default {
   // which test to run
   testMatch: ["<rootDir>/*/*.test.js"],
 
-  setupFiles: ["<rootDir>/jest.env.js"],
-
   // jest code coverage
   collectCoverage: true,
   coverageThreshold: {

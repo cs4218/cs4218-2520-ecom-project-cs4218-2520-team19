@@ -46,6 +46,13 @@ const mockRes = () => {
   return res;
 };
 
+jest.mock("braintree", () => ({
+  BraintreeGateway: jest.fn().mockImplementation(() => ({})),
+  Environment: {
+    Sandbox: "sandbox",
+  },
+}));
+
 beforeAll(() => {
   jest.clearAllMocks();
   jest.spyOn(console, "log").mockImplementation(() => {});

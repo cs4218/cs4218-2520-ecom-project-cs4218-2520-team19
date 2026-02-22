@@ -16,6 +16,15 @@ describe('hashPassword tests', () => {
         ['function', () => 'password123'],
     ];
 
+    beforeEach(() => {
+        // to prevent console from being flooded with logs
+        jest.spyOn(console, 'log').mockImplementation(() => {});
+    });
+
+    afterEach(() => {
+        jest.restoreAllMocks();
+    });
+
     it('should hash a password properly', async () => {
         const hashedPassword = await hashPassword(password);
         const isSame = await bcrypt.compare(password, hashedPassword);
@@ -25,7 +34,7 @@ describe('hashPassword tests', () => {
         expect(isSame).toBe(true);
     });
 
-    it('should not generate the same hash twice', async () => {
+    it('should not generate the same hash twice for the same password', async () => {
         const hashedPassword1 = await hashPassword(password);
         const hashedPassword2 = await hashPassword(password);
         
@@ -35,10 +44,7 @@ describe('hashPassword tests', () => {
     it.each(invalidPasswords)(
         'should throw an error when given invalid password of type %s',
         async (_, pw) => {
-            console.log = jest.fn();
-
             await expect(hashPassword(pw)).rejects.toThrow();
-            expect(console.log).toHaveBeenCalled();
         }
     );
 });

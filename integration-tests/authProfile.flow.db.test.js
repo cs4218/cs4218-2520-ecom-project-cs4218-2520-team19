@@ -2,7 +2,7 @@
 
 // contains integration tests for updateProfileController
 // with auth(login)
-
+process.env.JWT_SECRET = process.env.JWT_SECRET || "testsecret";
 import User from "../models/userModel";
 import mongoose from "mongoose";
 import { MongoMemoryServer } from "mongodb-memory-server";

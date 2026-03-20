@@ -2,7 +2,7 @@
 
 // contains integration tests for updateProfileController, getOrdersController,
 // getAllOrdersController, orderStatusController with DB
-
+process.env.JWT_SECRET = process.env.JWT_SECRET || "testsecret";
 import mongoose from "mongoose";
 import { MongoMemoryServer } from "mongodb-memory-server";
 import Order from "../models/orderModel";

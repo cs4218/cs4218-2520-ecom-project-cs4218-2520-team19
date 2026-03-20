@@ -1,7 +1,7 @@
 // Varatharaju Mithuna, A0281223N
 
 // contains integration tests for getOrdersController with orderStatusController
-
+process.env.JWT_SECRET = process.env.JWT_SECRET || "testsecret";
 import User from "../models/userModel";
 import mongoose from "mongoose";
 import { MongoMemoryServer } from "mongodb-memory-server";

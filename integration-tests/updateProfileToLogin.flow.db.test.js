@@ -3,14 +3,14 @@
 // contains integration tests for updateProfileController with
 // with auth(login)
 
-import User from "../../models/userModel";
+import User from "../models/userModel";
 import mongoose from "mongoose";
 import { MongoMemoryServer } from "mongodb-memory-server";
 import request from "supertest";
 import dotenv from 'dotenv';
 import express from 'express';
-import authRoutes from '../../routes/authRoute.js';
-import {comparePassword, hashPassword} from "../../helpers/authHelper.js";
+import authRoutes from '../routes/authRoute.js';
+import {comparePassword, hashPassword} from "../helpers/authHelper.js";
 // First run of the test suite may take longer due to MongoDB Memory Server setup
 jest.setTimeout(30000);
 

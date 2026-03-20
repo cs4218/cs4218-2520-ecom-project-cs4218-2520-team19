@@ -5,12 +5,12 @@
 
 import mongoose from "mongoose";
 import { MongoMemoryServer } from "mongodb-memory-server";
-import Order from "../../models/orderModel";
-import User from "../../models/userModel";
-import Product from "../../models/productModel";
-import Category from "../../models/categoryModel";
-import { updateProfileController, getOrdersController, getAllOrdersController, orderStatusController } from "../../controllers/authController";
-import {comparePassword, hashPassword} from "../../helpers/authHelper";
+import Order from "../models/orderModel";
+import User from "../models/userModel";
+import Product from "../models/productModel";
+import Category from "../models/categoryModel";
+import { updateProfileController, getOrdersController, getAllOrdersController, orderStatusController } from "../controllers/authController";
+import {comparePassword, hashPassword} from "../helpers/authHelper";
 
 let mongoServer;
 

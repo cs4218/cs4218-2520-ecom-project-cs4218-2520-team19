@@ -2,17 +2,17 @@
 
 // contains integration tests for getOrdersController with orderStatusController
 
-import User from "../../models/userModel";
+import User from "../models/userModel";
 import mongoose from "mongoose";
 import { MongoMemoryServer } from "mongodb-memory-server";
 import request from "supertest";
 import dotenv from 'dotenv';
 import express from 'express';
-import authRoutes from '../../routes/authRoute.js';
-import {hashPassword} from "../../helpers/authHelper.js";
-import Category from "../../models/categoryModel";
-import Product from "../../models/productModel";
-import Order from "../../models/orderModel";
+import authRoutes from '../routes/authRoute.js';
+import {hashPassword} from "../helpers/authHelper.js";
+import Category from "../models/categoryModel";
+import Product from "../models/productModel";
+import Order from "../models/orderModel";
 // First run of the test suite may take longer due to MongoDB Memory Server setup
 jest.setTimeout(30000);
 

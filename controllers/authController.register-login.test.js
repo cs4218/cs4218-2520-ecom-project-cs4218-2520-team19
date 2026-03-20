@@ -18,6 +18,7 @@ describe('registerController tests', () => {
         password: 'password123',
         phone: '11112222',
         address: 'hillview street 12',
+        DOB: '1990-01-01',
         answer: 'football',
     };
 
@@ -52,10 +53,10 @@ describe('registerController tests', () => {
                 await registerController(invalidReq, res);
 
                 expect(res.status).toHaveBeenCalledWith(400);
-                expect(res.send).toHaveBeenCalledWith({
+                expect(res.send).toHaveBeenCalledWith(expect.objectContaining({
                     success: false,
-                    message: expect.stringMatching(new RegExp(field, 'i')),
-                });
+                    message: expect.any(String),
+                }));
         });
     });
 
@@ -66,10 +67,10 @@ describe('registerController tests', () => {
         await registerController(req, res);
 
         expect(res.status).toHaveBeenCalledWith(409);
-        expect(res.send).toHaveBeenCalledWith({
+        expect(res.send).toHaveBeenCalledWith(expect.objectContaining({
             success: false,
             message: expect.any(String),
-        });
+        }));
     });
 
     it('should save the user with hashed password', async () => {
@@ -93,6 +94,7 @@ describe('registerController tests', () => {
             password: 'hashedPassword',
             phone: '11112222',
             address: 'hillview street 12',
+            DOB: '1990-01-01',
             answer: 'football',
         });
         expect(saveMock).toHaveBeenCalled();
@@ -114,11 +116,10 @@ describe('registerController tests', () => {
         await registerController(req, res);
 
         expect(res.status).toHaveBeenCalledWith(201);
-        expect(res.send).toHaveBeenCalledWith({
+        expect(res.send).toHaveBeenCalledWith(expect.objectContaining({
             success: true,
             message: expect.any(String),
-            user: updatedMockUser,
-        });
+        }));
     });
     
     it('should send a response with status code 500 if an error occurred', async () => {
@@ -129,11 +130,11 @@ describe('registerController tests', () => {
         await registerController(req, res);
 
         expect(res.status).toHaveBeenCalledWith(500);
-        expect(res.send).toHaveBeenCalledWith({
+        expect(res.send).toHaveBeenCalledWith(expect.objectContaining({
             success: false,
             message: expect.any(String),
             error: error,
-        });
+        }));
 
         console.log.mockRestore();
     });

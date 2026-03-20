@@ -149,7 +149,7 @@ describe('Register Component', () => {
     fireEvent.click(screen.getByText('REGISTER'));
 
     await waitFor(() => expect(axios.post).toHaveBeenCalled());
-    expect(toast.success).toHaveBeenCalledWith('Register Successfully, please login');
+    expect(toast.success).toHaveBeenCalledWith(res.data.message);
     await waitFor(() => expect(screen.getByTestId('mockLoginPage')).toBeInTheDocument());
   });
 

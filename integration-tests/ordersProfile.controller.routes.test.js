@@ -3,6 +3,7 @@
 // contains integration tests for updateProfileController, getOrdersController,
 // getAllOrdersController, orderStatusController with routes + Middleware
 
+process.env.JWT_SECRET = process.env.JWT_SECRET || "testsecret";
 import request from "supertest";
 import dotenv from 'dotenv';
 import express from 'express';

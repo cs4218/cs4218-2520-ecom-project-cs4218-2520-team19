@@ -1,6 +1,7 @@
 // A0272474Y Sun Zhiyuan Felix
 
 import categoryModel from "../models/categoryModel.js";
+import productModel from "../models/productModel.js";
 import slugify from "slugify";
 export const createCategoryController = async (req, res) => {
   try {
@@ -117,6 +118,7 @@ export const singleCategoryController = async (req, res) => {
 export const deleteCategoryController = async (req, res) => {
   try {
     const { id } = req.params;
+    await productModel.deleteMany({ category: id });
     await categoryModel.findByIdAndDelete(id);
     res.status(200).send({
       success: true,

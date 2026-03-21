@@ -2,7 +2,8 @@
 
 import axios from "axios";
 import userModel from "../models/userModel.js";
-import { clearTestDatabase, startTestServer, stopTestServer } from "../testServer.js";
+import productModel from "../models/productModel.js";
+import { clearTestDatabase, startTestServer, stopTestServer } from "../test-env-files/testServer.js";
 
 let authToken;
 
@@ -257,6 +258,34 @@ describe("Categories Component Integration Test", () => {
       expect(getRes.data.category).not.toContainEqual(
         expect.objectContaining({ name: "Delete Category" })
        );
+    });
+
+    test("Should delete products assigned to deleted category", async () => {
+      const createRes = await axios.post(
+        "http://localhost:6060/api/v1/category/create-category",
+        { name: "Category With Product" },
+        { headers: { Authorization: authToken } }
+      );
+
+      const categoryId = createRes.data.category._id;
+
+      const createdProduct = await productModel.create({
+        name: "Category Linked Product",
+        slug: "category-linked-product",
+        description: "Product assigned to category",
+        price: 99,
+        category: categoryId,
+        quantity: 5,
+        shipping: true,
+      });
+
+      await axios.delete(
+        `http://localhost:6060/api/v1/category/delete-category/${categoryId}`,
+        { headers: { Authorization: authToken } }
+      );
+
+      const deletedProduct = await productModel.findById(createdProduct._id);
+      expect(deletedProduct).toBeNull();
     });
 
     test("Should not delete category without auth", async () => {

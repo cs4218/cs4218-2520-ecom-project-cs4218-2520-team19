@@ -1,10 +1,12 @@
 // Sun Zhiyuan Felix (A0272474Y)
 
 import categoryModel from "../models/categoryModel.js";
+import productModel from "../models/productModel.js";
 import slugify from "slugify";
 import * as categoryController from "./categoryController.js";
 
 jest.mock("../models/categoryModel.js");
+jest.mock("../models/productModel.js");
 jest.mock("slugify", () => jest.fn((s) => s));
 
 const mockResponse = () => {
@@ -277,12 +279,14 @@ describe("deleteCategoryController", () => {
     });
 
     test("successful deletion of a category", async () => {
+        productModel.deleteMany = jest.fn().mockResolvedValue({ deletedCount: 2 });
         categoryModel.findByIdAndDelete = jest.fn();
         const req = { params: { id: 1 } };
         const res = mockResponse();
 
         await categoryController.deleteCategoryController(req, res);
 
+        expect(productModel.deleteMany).toHaveBeenCalledWith({ category: 1 });
         expect(res.status).toHaveBeenCalledWith(200);
         expect(res.send).toHaveBeenCalledWith({
             success: true,
@@ -294,6 +298,7 @@ describe("deleteCategoryController", () => {
         jest.spyOn(console, "log").mockImplementation(() => {});
 
         const mockError = new Error("Database error");
+        productModel.deleteMany = jest.fn().mockRejectedValue(mockError);
         categoryModel.findByIdAndDelete = jest.fn().mockRejectedValue(mockError);
         const req = { params: { id: 1 } };
         const res = mockResponse();

@@ -1,5 +1,5 @@
 // Sun Zhiyuan Felix (A0272474Y)
-// Admin user defaults for playwright tests// Centralized seeded admin defaults for isolated Playwright tests.
+// Admin user defaults for playwright tests
 
 export const seededAdmin = Object.freeze({
   name: 'Playwright Admin',

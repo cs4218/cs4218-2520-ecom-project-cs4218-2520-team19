@@ -13,9 +13,7 @@ import productRoutes from '../routes/productRoutes.js'
 import cors from "cors";
 import { MongoMemoryServer } from "mongodb-memory-server";
 import mongoose from "mongoose";
-import userModel from "../models/userModel.js";
-import { hashPassword } from "../helpers/authHelper.js";
-import { seededAdmin } from "../e2e-tests/isolated-environment-tests/seededAdmin.js";
+import { registerTestRoutes, seedPlaywrightAdmin } from "./testServerHelpers.js";
 
 let mongoServer;
 let server;
@@ -42,27 +40,6 @@ app.get('/', (req,res) => {
 });
 
 const PORT = process.env.PORT || 6060;
-
-async function seedPlaywrightAdmin() {
-    const admin = seededAdmin;
-    const existingAdmin = await userModel.findOne({ email: admin.email });
-
-    if (existingAdmin) {
-        return;
-    }
-
-    const hashedPassword = await hashPassword(admin.password);
-
-    await userModel.create({
-        name: admin.name,
-        email: admin.email,
-        password: hashedPassword,
-        phone: admin.phone,
-        address: admin.address,
-        answer: admin.answer,
-        role: admin.role,
-    });
-}
 
 async function startTestServer() {
     mongoServer = await MongoMemoryServer.create();
@@ -114,19 +91,6 @@ async function clearTestDataPreservingUsers() {
     }
 }
 
-async function resetTestDatabase() {
-    // Keep seeded users so login remains stable between tests.
-    await clearTestDataPreservingUsers();
-}
+registerTestRoutes(app, { clearTestDataPreservingUsers });
 
-// Test-only utility route for isolated Playwright specs.
-app.post('/api/v1/test/reset', async (req, res) => {
-    try {
-        await resetTestDatabase();
-        res.status(200).send({ success: true });
-    } catch (error) {
-        res.status(500).send({ success: false, message: 'Failed to reset test database' });
-    }
-});
-
-export { startTestServer, stopTestServer, clearTestDatabase, resetTestDatabase };
+export { startTestServer, stopTestServer, clearTestDatabase, clearTestDataPreservingUsers };

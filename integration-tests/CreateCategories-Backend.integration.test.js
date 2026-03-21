@@ -2,7 +2,7 @@
 
 import axios from "axios";
 import userModel from "../models/userModel.js";
-import { clearTestDatabase, startTestServer, stopTestServer } from "../testserver.js";
+import { clearTestDatabase, startTestServer, stopTestServer } from "../testServer.js";
 
 let authToken;
 

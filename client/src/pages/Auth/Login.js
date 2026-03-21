@@ -10,10 +10,7 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [auth, setAuth] = useAuth();
-  
-
   const navigate = useNavigate();
-  
 
   // form function
   const handleSubmit = async (e) => {
@@ -37,7 +34,10 @@ const Login = () => {
             user: res.data.user,
             token: res.data.token,
         });
-        localStorage.setItem("auth", JSON.stringify(res.data));
+        localStorage.setItem("auth", JSON.stringify({
+            user: res.data.user,
+            token: res.data.token,
+        }));
         navigate("/");
       } else {
         toast.error(res.data.message);

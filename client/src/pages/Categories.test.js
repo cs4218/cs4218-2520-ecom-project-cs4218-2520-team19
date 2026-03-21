@@ -1,5 +1,7 @@
 // Sun Zhiyuan Felix (A0272474Y)
 
+process.env.SUPPRESS_JEST_WARNINGS = 'true';
+
 import React from 'react';
 import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from 'react-router-dom';

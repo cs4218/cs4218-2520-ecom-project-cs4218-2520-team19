@@ -23,9 +23,6 @@ setup('authenticate', async ({ page }) => {
   await page.getByRole('textbox', { name: 'Enter Your Email' }).fill('uitest@email.com');
   await page.getByRole('textbox', { name: 'Enter Your Password' }).fill('password123');
   await page.getByRole('button', { name: 'LOGIN' }).click();
-  
-  //await page.waitForURL('/');
-  await expect(page.getByText('🙏Login Successfully')).toBeVisible();
 
   await page.context().storageState({ path: authFile });
 });

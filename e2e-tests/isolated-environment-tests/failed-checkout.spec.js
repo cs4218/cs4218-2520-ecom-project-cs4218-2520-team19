@@ -16,7 +16,7 @@ test.beforeAll(async ({ request }) => {
     const registerRes = await request.post('/api/v1/auth/register', {
         data: testUser,
     });
-    await expect(registerRes.ok()).toBeTruthy();
+    expect([201, 409]).toContain(registerRes.status());
 });
 
 test.beforeEach(async ({ request, page }) => {
@@ -27,14 +27,10 @@ test.beforeEach(async ({ request, page }) => {
     const seedRes = await request.post('/api/v1/test/seed-products');
     await expect(seedRes.ok()).toBeTruthy();
 
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
 });
 
 test.describe("Can't checkout", () => {
-    test.beforeEach(async ({ page }) => {
-        await page.goto('/');
-    });
-
     test("checking out when not logged in prompts login", async ({ page }) => {
         // Add products to cart
         await page.getByRole('button', { name: 'ADD TO CART' }).first().click();

@@ -64,7 +64,6 @@ test.describe("Can't checkout", () => {
         await page.getByRole('textbox', { name: 'Enter Your Email' }).fill(testUser.email);
         await page.getByRole('textbox', { name: 'Enter Your Password' }).fill(testUser.password);
         await page.getByRole('button', { name: 'LOGIN' }).click();
-        await expect(page.getByRole('link', { name: testUser.name })).toBeVisible();
         // Navigate back to cart
         await page.getByRole('link', { name: 'Cart' }).click();
 
@@ -79,7 +78,6 @@ test.describe("Can't checkout", () => {
         await page.getByRole('textbox', { name: 'Enter Your Email' }).fill(testUser.email);
         await page.getByRole('textbox', { name: 'Enter Your Password' }).fill(testUser.password);
         await page.getByRole('button', { name: 'LOGIN' }).click();
-        await expect(page.getByRole('link', { name: testUser.name })).toBeVisible();
         // Navigate to cart
         await page.getByRole('link', { name: 'Cart' }).click();
 

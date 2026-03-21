@@ -23,13 +23,20 @@ async function getAuthToken() {
   ).catch(() => null);
 
   // Login to get token
-  const loginRes = await axios.post(
-    "http://localhost:6060/api/v1/auth/login",
-    {
-      email: "test@example.com",
-      password: "test123"
-    }
-  );
+  let loginRes;
+  try {
+    loginRes = await axios.post(
+      "http://localhost:6060/api/v1/auth/login",
+      {
+        email: "test@example.com",
+        password: "test123"
+      }
+    );
+  } catch (error) {
+    const status = error?.response?.status;
+    const message = error?.response?.data?.message || error.message;
+    throw new Error(`Login failed (${status}): ${message}`);
+  }
 
   // Upgrade user to admin in database
   await userModel.updateOne(

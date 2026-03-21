@@ -45,12 +45,16 @@ async function startTestServer() {
     const mongoUri = mongoServer.getUri();
 
     process.env.MONGO_URL = mongoUri;
+    process.env.JWT_SECRET = process.env.JWT_SECRET || "test-jwt-secret";
 
     //database config
-    connectDB();
+    await connectDB();
 
-    server = app.listen(PORT, () => {
-        console.log(`Test server running on ${process.env.DEV_MODE} mode on ${PORT}`.bgCyan.white);
+    await new Promise((resolve) => {
+        server = app.listen(PORT, () => {
+            console.log(`Test server running on ${process.env.DEV_MODE} mode on ${PORT}`.bgCyan.white);
+            resolve();
+        });
     });
 };
 

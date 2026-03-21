@@ -1,7 +1,7 @@
 // Sun Zhiyuan Felix (A0272474Y)
 
 import React from "react";
-import { render, screen, within, fireEvent, waitFor } from "@testing-library/react";
+import { render, screen, within, fireEvent, waitFor, act } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import axios from "axios";
 import CreateCategory from "../pages/admin/CreateCategory";
@@ -29,6 +29,9 @@ function renderWithProviders(ui) {
   );
 }
 
+// For chained promises in event handlers to wait for all updates to complete
+const flushPromises = () => new Promise((resolve) => setTimeout(resolve, 0));
+
 describe("CreateCategory integration with frontend parts", () => {
   beforeEach(() => {
     axios.get.mockResolvedValue({
@@ -44,7 +47,8 @@ describe("CreateCategory integration with frontend parts", () => {
     const { container } = renderWithProviders(<CreateCategory />);
     const main = container.querySelector("main");
 
-    expect(await within(main).findByText("Manage Category")).toBeInTheDocument();
+    await within(main).findByText("Electronics");
+    expect(within(main).getByText("Manage Category")).toBeInTheDocument();
     expect(within(main).getByPlaceholderText("Enter new category")).toBeInTheDocument();
     expect(within(main).getByRole("button", { name: /submit/i })).toBeInTheDocument();
   });
@@ -67,14 +71,16 @@ describe("CreateCategory integration with frontend parts", () => {
 
     const input = within(main).getByPlaceholderText("Enter new category");
     fireEvent.change(input, { target: { value: "Books" } });
-    fireEvent.click(within(main).getByRole("button", { name: /submit/i }));
-
-    await waitFor(() => {
-      expect(axios.post).toHaveBeenCalledWith(
-        "/api/v1/category/create-category",
-        { name: "Books" }
-      );
+    await act(async () => {
+      fireEvent.click(within(main).getByRole("button", { name: /submit/i }));
+      await flushPromises();
     });
+
+    expect(axios.post).toHaveBeenCalledWith(
+      "/api/v1/category/create-category",
+      { name: "Books" }
+    );
+    expect(axios.get.mock.calls.length).toBeGreaterThanOrEqual(2);
   });
 
   test("opens edit modal pre-filled with the selected category name", async () => {
@@ -100,14 +106,16 @@ describe("CreateCategory integration with frontend parts", () => {
     const modal = await screen.findByRole("dialog");
     const modalInput = within(modal).getByPlaceholderText("Enter new category");
     fireEvent.change(modalInput, { target: { value: "Electronics Updated" } });
-    fireEvent.click(within(modal).getByRole("button", { name: /submit/i }));
-
-    await waitFor(() => {
-      expect(axios.put).toHaveBeenCalledWith(
-        "/api/v1/category/update-category/cat1",
-        { name: "Electronics Updated" }
-      );
+    await act(async () => {
+      fireEvent.click(within(modal).getByRole("button", { name: /submit/i }));
+      await flushPromises();
     });
+
+    expect(axios.put).toHaveBeenCalledWith(
+      "/api/v1/category/update-category/cat1",
+      { name: "Electronics Updated" }
+    );
+    expect(axios.get.mock.calls.length).toBeGreaterThanOrEqual(2);
   });
 
   test("deletes category", async () => {
@@ -115,14 +123,16 @@ describe("CreateCategory integration with frontend parts", () => {
     const { container } = renderWithProviders(<CreateCategory />);
     const main = container.querySelector("main");
     await within(main).findByText("Electronics");
-    
-    const deleteButtons = within(main).getAllByRole("button", { name: /delete/i });
-    fireEvent.click(deleteButtons[0]);
 
-    await waitFor(() => {
-      expect(axios.delete).toHaveBeenCalledWith(
-        "/api/v1/category/delete-category/cat1"
-      );
+    const deleteButtons = within(main).getAllByRole("button", { name: /delete/i });
+    await act(async () => {
+      fireEvent.click(deleteButtons[0]);
+      await flushPromises();
     });
+
+    expect(axios.delete).toHaveBeenCalledWith(
+      "/api/v1/category/delete-category/cat1"
+    );
+    expect(axios.get.mock.calls.length).toBeGreaterThanOrEqual(2);
   });
 });

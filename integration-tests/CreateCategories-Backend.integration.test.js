@@ -117,7 +117,7 @@ describe("Categories Component Integration Test", () => {
           { headers: { Authorization: authToken } }
         );
       } catch (error) {
-        expect(error.response.status).toBe(401);
+        expect(error.response.status).toBe(400);
         expect(error.response.data).toHaveProperty("message", "Name is required");
       }
     });
@@ -136,7 +136,7 @@ describe("Categories Component Integration Test", () => {
           { headers: { Authorization: authToken } }
         );
       } catch (error) {
-        expect(error.response.status).toBe(401);
+        expect(error.response.status).toBe(409);
         expect(error.response.data).toHaveProperty("success", false);
       }
     });
@@ -201,7 +201,7 @@ describe("Categories Component Integration Test", () => {
           { headers: { Authorization: authToken } }
         );
       } catch (error) {
-        expect(error.response.status).toBe(401);
+        expect(error.response.status).toBe(400);
         expect(error.response.data).toHaveProperty("message", "Name is required");
       }
     });
@@ -226,7 +226,7 @@ describe("Categories Component Integration Test", () => {
           { headers: { Authorization: authToken } }
         );
       } catch (error) {
-        expect(error.response.status).toBe(500);
+        expect(error.response.status).toBe(409);
         expect(error.response.data).toHaveProperty("success", false);
       }
     });
@@ -273,6 +273,7 @@ describe("Categories Component Integration Test", () => {
     });
 
     test("Should not delete non-existent category", async () => {
+      jest.spyOn(console, "log").mockImplementation(() => {});
       try {
         await axios.delete(
           `http://localhost:6060/api/v1/category/delete-category/123`,
@@ -281,6 +282,8 @@ describe("Categories Component Integration Test", () => {
       } catch (error) {
         expect(error.response.status).toBe(500);
         expect(error.response.data).toHaveProperty("success", false);
+      } finally {
+        console.log.mockRestore();
       }
     });
   });

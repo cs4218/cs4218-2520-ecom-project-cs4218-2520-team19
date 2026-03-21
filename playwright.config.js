@@ -39,7 +39,6 @@ export default defineConfig({
     { name: 'setup', testMatch: /.*\.setup\.js/ },
     {
       name: 'chromium',
-      testMatch: /.*\.spec\.js/,
       use: { 
         ...devices['Desktop Chrome'],
         // Use prepared auth state.

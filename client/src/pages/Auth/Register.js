@@ -2,8 +2,11 @@ import React, { useState } from "react";
 import Layout from "./../../components/Layout";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/auth";
+import { useEffect } from "react";
 import toast from "react-hot-toast";
 import "../../styles/AuthStyles.css";
+
 const Register = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -12,7 +15,16 @@ const Register = () => {
   const [address, setAddress] = useState("");
   const [DOB, setDOB] = useState("");
   const [answer, setAnswer] = useState("");
+  const [auth] = useAuth();
   const navigate = useNavigate();
+
+  // prevent access to Register page when user is already logged in
+  useEffect(() => {
+    if (auth && auth.token) {
+      toast.error("You are already logged in");
+      navigate("/");
+    }
+  }, [auth]);
 
   // form function
   const handleSubmit = async (e) => {
@@ -35,7 +47,7 @@ const Register = () => {
       }
     } catch (error) {
       console.log(error);
-      toast.error(error.message);
+      toast.error(error.response.data.message);
     }
   };
 

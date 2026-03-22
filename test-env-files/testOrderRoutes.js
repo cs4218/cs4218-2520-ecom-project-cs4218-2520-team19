@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 //Varatharaju Mithuna, A0281223N
 // test-env-files/testOrderRoutes.js
 import express from "express";

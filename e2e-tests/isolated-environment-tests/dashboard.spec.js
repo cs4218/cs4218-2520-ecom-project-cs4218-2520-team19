@@ -48,10 +48,11 @@ test.describe('Orders dashboard tests', () => {
     test('Dashboard displays user info after login', async ({page}) => {
         // Go to dashboard (logged-in user)
         await page.goto('/dashboard/user');
+        await page.waitForLoadState('networkidle');
 
         // Verify user info displayed
-        await expect(page.locator('div.dashboard')).toBeVisible();
-        const dashboard = page.locator('div.dashboard .card');
+        const dashboard = page.locator('div.dashboard');
+        await dashboard.waitFor({ state: 'visible', timeout: 15000 });
 
         // Check userName exactly
         await expect(dashboard.getByRole('heading', {name: 'uitestorder', exact: true})).toBeVisible();
@@ -66,6 +67,11 @@ test.describe('Orders dashboard tests', () => {
     test('Login -> dashboard -> view all past orders', async ({page}) => {
         // Go to dashboard
         await page.goto('/dashboard/user');
+        await page.waitForLoadState('networkidle');
+
+        // Verify user info displayed
+        const dashboard = page.locator('div.dashboard');
+        await dashboard.waitFor({ state: 'visible', timeout: 15000 });
 
         // Navigate to Orders
         await page.getByRole('link', {name: 'Orders'}).click();
@@ -117,9 +123,17 @@ test.describe('Profile management tests', () => {
     test('Can update profile and view in dashboard', async ({ page }) => {
         // Go to dashboard
         await page.goto('/dashboard/user');
+        const dashboard = page.locator('div.dashboard');
+        await dashboard.waitFor({ state: 'visible', timeout: 15000 });
 
-        // Click on Profile link
-        await page.getByRole('link', { name: 'Profile' }).click();
+        // Before clicking Profile link
+        await page.waitForLoadState('networkidle');
+        const profileLink = page.getByRole('link', { name: 'Profile' });
+        await profileLink.waitFor({ state: 'visible', timeout: 15000 });
+        await profileLink.click();
+
+        // Wait for profile page title
+        await page.locator('h4.title', { hasText: 'USER PROFILE' }).waitFor({ timeout: 15000 });
 
         // Verify Profile page loaded
         await expect(page.locator('h4.title')).toHaveText('USER PROFILE');
@@ -145,12 +159,25 @@ test.describe('Profile management tests', () => {
 
         // Verify updated info in dashboard card
         const dashboardCard = page.locator('div.dashboard .card');
+        await dashboardCard.waitFor({ state: 'visible', timeout: 15000 });
         await expect(dashboardCard.getByRole('heading', { name: newName, exact: true })).toBeVisible();
         await expect(dashboardCard.getByRole('heading', { name: newAddress, exact: true })).toBeVisible();
     });
     test('Cannot update invalid phone', async ({ page }) => {
         await page.goto('/dashboard/user');
-        await page.getByRole('link', { name: 'Profile' }).click();
+        const dashboard = page.locator('div.dashboard');
+        await dashboard.waitFor({ state: 'visible', timeout: 15000 });
+
+        // Before clicking Profile link
+        await page.waitForLoadState('networkidle');
+        const profileLink = page.getByRole('link', { name: 'Profile' });
+        await profileLink.waitFor({ state: 'visible', timeout: 15000 });
+        await profileLink.click();
+
+        // Wait for profile page title
+        await page.locator('h4.title', { hasText: 'USER PROFILE' }).waitFor({ timeout: 15000 });
+
+        // Verify Profile page loaded
         await expect(page.locator('h4.title')).toHaveText('USER PROFILE');
 
         await page.locator('input[placeholder="Enter Your Phone"]').fill('hai');
@@ -160,7 +187,19 @@ test.describe('Profile management tests', () => {
     });
     test('Cannot update password = 5  characters', async ({ page }) => {
         await page.goto('/dashboard/user');
-        await page.getByRole('link', { name: 'Profile' }).click();
+        const dashboard = page.locator('div.dashboard');
+        await dashboard.waitFor({ state: 'visible', timeout: 15000 });
+
+        // Before clicking Profile link
+        await page.waitForLoadState('networkidle');
+        const profileLink = page.getByRole('link', { name: 'Profile' });
+        await profileLink.waitFor({ state: 'visible', timeout: 15000 });
+        await profileLink.click();
+
+        // Wait for profile page title
+        await page.locator('h4.title', { hasText: 'USER PROFILE' }).waitFor({ timeout: 15000 });
+
+        // Verify Profile page loaded
         await expect(page.locator('h4.title')).toHaveText('USER PROFILE');
 
         await page.locator('input[placeholder="Enter Your Password"]').fill('12345');
@@ -171,9 +210,17 @@ test.describe('Profile management tests', () => {
     test('Can update password = 6 characters', async ({ page }) => {
         // Go to dashboard
         await page.goto('/dashboard/user');
+        const dashboard = page.locator('div.dashboard');
+        await dashboard.waitFor({ state: 'visible', timeout: 15000 });
 
-        // Click on Profile link
-        await page.getByRole('link', { name: 'Profile' }).click();
+        // Before clicking Profile link
+        await page.waitForLoadState('networkidle');
+        const profileLink = page.getByRole('link', { name: 'Profile' });
+        await profileLink.waitFor({ state: 'visible', timeout: 15000 });
+        await profileLink.click();
+
+        // Wait for profile page title
+        await page.locator('h4.title', { hasText: 'USER PROFILE' }).waitFor({ timeout: 15000 });
 
         // Verify Profile page loaded
         await expect(page.locator('h4.title')).toHaveText('USER PROFILE');
@@ -191,9 +238,17 @@ test.describe('Profile management tests', () => {
     test('Can update password = 7 characters', async ({ page }) => {
         // Go to dashboard
         await page.goto('/dashboard/user');
+        const dashboard = page.locator('div.dashboard');
+        await dashboard.waitFor({ state: 'visible', timeout: 15000 });
 
-        // Click on Profile link
-        await page.getByRole('link', { name: 'Profile' }).click();
+        // Before clicking Profile link
+        await page.waitForLoadState('networkidle');
+        const profileLink = page.getByRole('link', { name: 'Profile' });
+        await profileLink.waitFor({ state: 'visible', timeout: 15000 });
+        await profileLink.click();
+
+        // Wait for profile page title
+        await page.locator('h4.title', { hasText: 'USER PROFILE' }).waitFor({ timeout: 15000 });
 
         // Verify Profile page loaded
         await expect(page.locator('h4.title')).toHaveText('USER PROFILE');
@@ -210,7 +265,19 @@ test.describe('Profile management tests', () => {
 
     test('No update and dashboard remains the same', async ({ page }) => {
         await page.goto('/dashboard/user');
-        await page.getByRole('link', { name: 'Profile' }).click();
+        const dashboard = page.locator('div.dashboard');
+        await dashboard.waitFor({ state: 'visible', timeout: 15000 });
+
+        // Before clicking Profile link
+        await page.waitForLoadState('networkidle');
+        const profileLink = page.getByRole('link', { name: 'Profile' });
+        await profileLink.waitFor({ state: 'visible', timeout: 15000 });
+        await profileLink.click();
+
+        // Wait for profile page title
+        await page.locator('h4.title', { hasText: 'USER PROFILE' }).waitFor({ timeout: 15000 });
+
+        // Verify Profile page loaded
         await expect(page.locator('h4.title')).toHaveText('USER PROFILE');
 
         // Get current values
@@ -223,14 +290,27 @@ test.describe('Profile management tests', () => {
 
         // Verify dashboard
         await page.goto('/dashboard/user');
-        const dashboardCard = page.locator('div.dashboard .card');
+        const dashboardCard = page.locator('div.dashboard');
+        await dashboardCard.waitFor({ state: 'visible', timeout: 15000 });
         await expect(dashboardCard.getByRole('heading', { name: currentName, exact: true })).toBeVisible();
         await expect(dashboardCard.getByRole('heading', { name: currentAddress, exact: true })).toBeVisible();
     });
 
     test('Empty fields revert to old profile values', async ({ page }) => {
         await page.goto('/dashboard/user');
-        await page.getByRole('link', { name: 'Profile' }).click();
+        const dashboard = page.locator('div.dashboard');
+        await dashboard.waitFor({ state: 'visible', timeout: 15000 });
+
+        // Before clicking Profile link
+        await page.waitForLoadState('networkidle');
+        const profileLink = page.getByRole('link', { name: 'Profile' });
+        await profileLink.waitFor({ state: 'visible', timeout: 15000 });
+        await profileLink.click();
+
+        // Wait for profile page title
+        await page.locator('h4.title', { hasText: 'USER PROFILE' }).waitFor({ timeout: 15000 });
+
+        // Verify Profile page loaded
         await expect(page.locator('h4.title')).toHaveText('USER PROFILE');
 
         // Capture old values first
@@ -258,7 +338,19 @@ test.describe('Profile management tests', () => {
 
     test('Partial update profile and view', async ({ page }) => {
         await page.goto('/dashboard/user');
-        await page.getByRole('link', { name: 'Profile' }).click();
+        const dashboard = page.locator('div.dashboard');
+        await dashboard.waitFor({ state: 'visible', timeout: 15000 });
+
+        // Before clicking Profile link
+        await page.waitForLoadState('networkidle');
+        const profileLink = page.getByRole('link', { name: 'Profile' });
+        await profileLink.waitFor({ state: 'visible', timeout: 15000 });
+        await profileLink.click();
+
+        // Wait for profile page title
+        await page.locator('h4.title', { hasText: 'USER PROFILE' }).waitFor({ timeout: 15000 });
+
+        // Verify Profile page loaded
         await expect(page.locator('h4.title')).toHaveText('USER PROFILE');
 
         const partialName = 'Partial Update Name';
@@ -276,7 +368,8 @@ test.describe('Profile management tests', () => {
 
         // Verify dashboard
         await page.goto('/dashboard/user');
-        const dashboardCard = page.locator('div.dashboard .card');
+        const dashboardCard = page.locator('div.dashboard');
+        await dashboardCard.waitFor({ state: 'visible', timeout: 15000 });
         await expect(dashboardCard.getByRole('heading', { name: partialName, exact: true })).toBeVisible();
         await expect(dashboardCard.getByRole('heading', { name: oldAddress, exact: true })).toBeVisible(); // address should stay the same
     });

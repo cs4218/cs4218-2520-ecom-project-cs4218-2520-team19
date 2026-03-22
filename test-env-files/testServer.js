@@ -6,13 +6,14 @@ import express from "express";
 import colors from "colors";
 import dotenv from "dotenv";
 import morgan from "morgan";
-import connectDB from "./config/db.js";
-import authRoutes from './routes/authRoute.js'
-import categoryRoutes from './routes/categoryRoutes.js'
-import productRoutes from './routes/productRoutes.js'
+import connectDB from "../config/db.js";
+import authRoutes from '../routes/authRoute.js'
+import categoryRoutes from '../routes/categoryRoutes.js'
+import productRoutes from '../routes/productRoutes.js'
 import cors from "cors";
 import { MongoMemoryServer } from "mongodb-memory-server";
 import mongoose from "mongoose";
+import { registerTestRoutes, seedPlaywrightAdmin } from "./testServerHelpers.js";
 
 let mongoServer;
 let server;
@@ -49,6 +50,7 @@ async function startTestServer() {
 
     //database config
     await connectDB();
+    await seedPlaywrightAdmin();
 
     await new Promise((resolve) => {
         server = app.listen(PORT, () => {
@@ -75,4 +77,20 @@ async function clearTestDatabase() {
     }
 }
 
-export { startTestServer, stopTestServer, clearTestDatabase };
+async function clearTestDataPreservingUsers() {
+    if (!mongoServer) {
+        return;
+    }
+
+    const collections = mongoose.connection.collections;
+    for (const key in collections) {
+        if (key === 'users') {
+            continue;
+        }
+        await collections[key].deleteMany();
+    }
+}
+
+registerTestRoutes(app, { clearTestDataPreservingUsers });
+
+export { startTestServer, stopTestServer, clearTestDatabase, clearTestDataPreservingUsers };

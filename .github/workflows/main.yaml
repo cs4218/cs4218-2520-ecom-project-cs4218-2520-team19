@@ -50,3 +50,7 @@ jobs:
       # Run Playwright tests
       - name: Run Playwright tests
         run: npx playwright test
+
+      # Run Playwright tests in isolated environment
+      - name: Run Playwright tests in isolated environment
+        run: npx playwright test --config=playwright.isolated.config.js

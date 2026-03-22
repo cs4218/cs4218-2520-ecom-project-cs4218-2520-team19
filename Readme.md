@@ -89,6 +89,20 @@ https://github.com/cs4218/cs4218-2520-ecom-project-cs4218-2520-team19/actions/ru
       - `braintreeTokenController`
       - `brainTreePaymentController`
 
+---
+
+## MS2 Workload Distribution
+
+### Teo Kim Han
+
+- **Integration Tests**
+  - Login, Register and ForgotPassword
+- **UI Tests**
+  - Cart-related
+  - Search-related
+  - Forgot password
+  - Restriction of admin-routes to non-admins
+
 ## 1. Project Introduction
 
 Virtual Vault is a full-stack MERN (MongoDB, Express.js, React.js, Node.js) e-commerce website, offering seamless connectivity and user-friendly features. The platform provides a robust framework for online shopping. The website is designed to adapt to evolving business needs and can be efficiently extended.
@@ -228,7 +242,7 @@ To begin unit testing with Jest in your project, follow these steps:
 
      ```bash
      npm run test:playwright:isolated
-     ```  
+     ```
 
    - **All the tests**
      ```bash

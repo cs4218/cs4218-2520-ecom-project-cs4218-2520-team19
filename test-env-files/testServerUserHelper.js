@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 //Varatharaju Mithuna, A0281223N
 import { hashPassword } from "../helpers/authHelper.js";
 import userModel from "../models/userModel.js";

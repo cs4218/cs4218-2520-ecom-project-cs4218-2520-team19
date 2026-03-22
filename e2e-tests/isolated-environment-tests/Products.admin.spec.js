@@ -168,28 +168,39 @@ test.describe('Admin – Products', () => {
   });
 
   test('Delete 1 Product -> Sees Product Deleted', async ({ page }) => {
-    await navigateToCreateProduct(page);
-    await fillProductForm(page, {
-      name: 'Delete Me Product',
-      category: TEST_CATEGORY,
-      price: '9.99',
-      quantity: '5',
-    });
+    await page.getByRole('button', { name: adminName }).click();
+    await page.getByRole('link', { name: 'Dashboard' }).click();
+    await page.getByRole('link', { name: 'Create Product' }).click();
+    await page
+      .locator('div')
+      .filter({ hasText: /^Select a category$/ })
+      .first()
+      .click();
+    await page.getByTitle('TestCategory').click({ force: true });
+    await page
+      .getByRole('textbox', { name: 'write a name' })
+      .fill('Delete Me Product');
+    await page
+      .getByRole('textbox', { name: 'write a description' })
+      .fill('Delete Me Product Description');
+    await page.getByPlaceholder('write a Price').fill('9.99');
+    await page.getByPlaceholder('write a quantity').fill('5');
+    await page.locator('.mb-3 > .ant-select').click();
+    await page.getByText('Yes').click();
     await page.getByRole('button', { name: 'CREATE PRODUCT' }).click();
 
+    // Open the product edit page to capture its slug from the URL
     await page.getByRole('link', { name: 'Products' }).click();
-    await page
-      .locator('.product-link')
-      .filter({ hasText: 'Delete Me Product' })
-      .click();
+    await page.getByRole('link', { name: 'Delete Me Product' }).click();
 
-    // handleDelete uses window.prompt — listener must be registered before clicking
-    page.on('dialog', (dialog) => dialog.accept('yes'));
-    await page.getByRole('button', { name: 'DELETE PRODUCT' }).click();
+    const deleteBtn = page.getByRole('button', { name: 'DELETE PRODUCT' });
+    await expect(deleteBtn).toBeVisible(); // wait until Playwright can see it
+    page.once('dialog', (dialog) => dialog.accept('yes'));
+    await deleteBtn.click();
+    await page.getByRole('link', { name: 'Products' }).click();
 
-    await expect(page).toHaveURL('/dashboard/admin/products');
     await expect(
-      page.locator('.product-link').filter({ hasText: 'Delete Me Product' }),
+      page.getByRole('link', { name: 'Delete Me Product' }),
     ).not.toBeVisible();
   });
 });

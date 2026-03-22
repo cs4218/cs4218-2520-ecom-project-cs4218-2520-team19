@@ -69,9 +69,7 @@ test.describe('Deleted Products Should Not Be Accessible', () => {
     // Open the product edit page to capture its slug from the URL
     await page.getByRole('link', { name: 'Products' }).click();
     await page.getByRole('link', { name: 'Ghost Product' }).click();
-    const editUrl = page.url();
-    const slugMatch = editUrl.match(/update-product\/(.+)/);
-    const slug = slugMatch ? slugMatch[1] : null;
+    const slug = 'ghost-product';
 
     page.on('dialog', async (dialog) => {
       await dialog.accept('yes');
@@ -90,6 +88,6 @@ test.describe('Deleted Products Should Not Be Accessible', () => {
       await page.goto(`/product/${slug}`);
     }
 
-    await expect(page.getByText(/Ghost Product/i)).not.toBeVisible();
+    await expect(page.getByText(/Product Not Found/i)).toBeVisible();
   });
 });

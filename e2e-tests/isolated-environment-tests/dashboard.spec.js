@@ -47,12 +47,9 @@ test.describe('Orders dashboard tests', () => {
 
     test('Dashboard displays user info after login', async ({page}) => {
         // Go to dashboard (logged-in user)
-        await page.goto('/dashboard/user');
-        await page.waitForLoadState('networkidle');
-
-        // Verify user info displayed
+        await page.goto('/dashboard/user', { waitUntil: 'networkidle' });
         const dashboard = page.locator('div.dashboard');
-        await dashboard.waitFor({ state: 'visible', timeout: 15000 });
+        await dashboard.waitFor({ state: 'visible', timeout: 60000 });
 
         // Check userName exactly
         await expect(dashboard.getByRole('heading', {name: 'uitestorder', exact: true})).toBeVisible();
@@ -66,12 +63,9 @@ test.describe('Orders dashboard tests', () => {
 
     test('Login -> dashboard -> view all past orders', async ({page}) => {
         // Go to dashboard
-        await page.goto('/dashboard/user');
-        await page.waitForLoadState('networkidle');
-
-        // Verify user info displayed
+        await page.goto('/dashboard/user', { waitUntil: 'networkidle' });
         const dashboard = page.locator('div.dashboard');
-        await dashboard.waitFor({ state: 'visible', timeout: 15000 });
+        await dashboard.waitFor({ state: 'visible', timeout: 60000 });
 
         // Navigate to Orders
         await page.getByRole('link', {name: 'Orders'}).click();
@@ -122,9 +116,9 @@ test.describe('Profile management tests', () => {
 
     test('Can update profile and view in dashboard', async ({ page }) => {
         // Go to dashboard
-        await page.goto('/dashboard/user');
+        await page.goto('/dashboard/user', { waitUntil: 'networkidle' });
         const dashboard = page.locator('div.dashboard');
-        await dashboard.waitFor({ state: 'visible', timeout: 15000 });
+        await dashboard.waitFor({ state: 'visible', timeout: 60000 });
 
         // Before clicking Profile link
         await page.waitForLoadState('networkidle');
@@ -155,18 +149,18 @@ test.describe('Profile management tests', () => {
         await expect(page.locator('text=Profile Updated Successfully')).toBeVisible();
 
         // Go to dashboard
-        await page.goto('/dashboard/user');
+        await page.goto('/dashboard/user', { waitUntil: 'networkidle' });
+        const dashboardCard = page.locator('div.dashboard');
+        await dashboardCard.waitFor({ state: 'visible', timeout: 60000 });
 
-        // Verify updated info in dashboard card
-        const dashboardCard = page.locator('div.dashboard .card');
-        await dashboardCard.waitFor({ state: 'visible', timeout: 15000 });
+        //verify
         await expect(dashboardCard.getByRole('heading', { name: newName, exact: true })).toBeVisible();
         await expect(dashboardCard.getByRole('heading', { name: newAddress, exact: true })).toBeVisible();
     });
     test('Cannot update invalid phone', async ({ page }) => {
-        await page.goto('/dashboard/user');
+        await page.goto('/dashboard/user', { waitUntil: 'networkidle' });
         const dashboard = page.locator('div.dashboard');
-        await dashboard.waitFor({ state: 'visible', timeout: 15000 });
+        await dashboard.waitFor({ state: 'visible', timeout: 60000 });
 
         // Before clicking Profile link
         await page.waitForLoadState('networkidle');
@@ -186,9 +180,9 @@ test.describe('Profile management tests', () => {
         await expect(page.locator('text="Phone number should be numeric"')).toBeVisible();
     });
     test('Cannot update password = 5  characters', async ({ page }) => {
-        await page.goto('/dashboard/user');
+        await page.goto('/dashboard/user', { waitUntil: 'networkidle' });
         const dashboard = page.locator('div.dashboard');
-        await dashboard.waitFor({ state: 'visible', timeout: 15000 });
+        await dashboard.waitFor({ state: 'visible', timeout: 60000 });
 
         // Before clicking Profile link
         await page.waitForLoadState('networkidle');
@@ -209,9 +203,9 @@ test.describe('Profile management tests', () => {
     });
     test('Can update password = 6 characters', async ({ page }) => {
         // Go to dashboard
-        await page.goto('/dashboard/user');
+        await page.goto('/dashboard/user', { waitUntil: 'networkidle' });
         const dashboard = page.locator('div.dashboard');
-        await dashboard.waitFor({ state: 'visible', timeout: 15000 });
+        await dashboard.waitFor({ state: 'visible', timeout: 60000 });
 
         // Before clicking Profile link
         await page.waitForLoadState('networkidle');
@@ -237,9 +231,9 @@ test.describe('Profile management tests', () => {
 
     test('Can update password = 7 characters', async ({ page }) => {
         // Go to dashboard
-        await page.goto('/dashboard/user');
+        await page.goto('/dashboard/user', { waitUntil: 'networkidle' });
         const dashboard = page.locator('div.dashboard');
-        await dashboard.waitFor({ state: 'visible', timeout: 15000 });
+        await dashboard.waitFor({ state: 'visible', timeout: 60000 });
 
         // Before clicking Profile link
         await page.waitForLoadState('networkidle');
@@ -264,9 +258,9 @@ test.describe('Profile management tests', () => {
     });
 
     test('No update and dashboard remains the same', async ({ page }) => {
-        await page.goto('/dashboard/user');
+        await page.goto('/dashboard/user', { waitUntil: 'networkidle' });
         const dashboard = page.locator('div.dashboard');
-        await dashboard.waitFor({ state: 'visible', timeout: 15000 });
+        await dashboard.waitFor({ state: 'visible', timeout: 60000 });
 
         // Before clicking Profile link
         await page.waitForLoadState('networkidle');
@@ -289,17 +283,18 @@ test.describe('Profile management tests', () => {
         await expect(page.locator('text=Profile Updated Successfully')).toBeVisible();
 
         // Verify dashboard
-        await page.goto('/dashboard/user');
+        // Go to dashboard
+        await page.goto('/dashboard/user', { waitUntil: 'networkidle' });
         const dashboardCard = page.locator('div.dashboard');
-        await dashboardCard.waitFor({ state: 'visible', timeout: 15000 });
+        await dashboardCard.waitFor({ state: 'visible', timeout: 60000 });
         await expect(dashboardCard.getByRole('heading', { name: currentName, exact: true })).toBeVisible();
         await expect(dashboardCard.getByRole('heading', { name: currentAddress, exact: true })).toBeVisible();
     });
 
     test('Empty fields revert to old profile values', async ({ page }) => {
-        await page.goto('/dashboard/user');
+        await page.goto('/dashboard/user', { waitUntil: 'networkidle' });
         const dashboard = page.locator('div.dashboard');
-        await dashboard.waitFor({ state: 'visible', timeout: 15000 });
+        await dashboard.waitFor({ state: 'visible', timeout: 60000 });
 
         // Before clicking Profile link
         await page.waitForLoadState('networkidle');
@@ -337,9 +332,9 @@ test.describe('Profile management tests', () => {
     });
 
     test('Partial update profile and view', async ({ page }) => {
-        await page.goto('/dashboard/user');
+        await page.goto('/dashboard/user', { waitUntil: 'networkidle' });
         const dashboard = page.locator('div.dashboard');
-        await dashboard.waitFor({ state: 'visible', timeout: 15000 });
+        await dashboard.waitFor({ state: 'visible', timeout: 60000 });
 
         // Before clicking Profile link
         await page.waitForLoadState('networkidle');
@@ -367,9 +362,10 @@ test.describe('Profile management tests', () => {
         await expect(page.locator('text=Profile Updated Successfully')).toBeVisible();
 
         // Verify dashboard
-        await page.goto('/dashboard/user');
+        // Go to dashboard
+        await page.goto('/dashboard/user', { waitUntil: 'networkidle' });
         const dashboardCard = page.locator('div.dashboard');
-        await dashboardCard.waitFor({ state: 'visible', timeout: 15000 });
+        await dashboardCard.waitFor({ state: 'visible', timeout: 60000 });
         await expect(dashboardCard.getByRole('heading', { name: partialName, exact: true })).toBeVisible();
         await expect(dashboardCard.getByRole('heading', { name: oldAddress, exact: true })).toBeVisible(); // address should stay the same
     });

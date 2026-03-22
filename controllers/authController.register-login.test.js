@@ -18,7 +18,6 @@ describe('registerController tests', () => {
         password: 'password123',
         phone: '11112222',
         address: 'hillview street 12',
-        DOB: '1990-01-01',
         answer: 'football',
     };
 
@@ -94,7 +93,6 @@ describe('registerController tests', () => {
             password: 'hashedPassword',
             phone: '11112222',
             address: 'hillview street 12',
-            DOB: '1990-01-01',
             answer: 'football',
         });
         expect(saveMock).toHaveBeenCalled();

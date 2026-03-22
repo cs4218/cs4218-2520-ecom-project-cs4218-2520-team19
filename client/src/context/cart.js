@@ -1,9 +1,4 @@
-<<<<<<< HEAD
 import React, { useState, useContext, createContext, useEffect } from "react";
-=======
-import React  from "react";
-import { useState, useContext, createContext, useEffect } from "react";
->>>>>>> main
 
 const CartContext = createContext();
 const CartProvider = ({ children }) => {

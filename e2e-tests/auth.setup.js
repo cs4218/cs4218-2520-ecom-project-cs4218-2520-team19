@@ -11,7 +11,6 @@ setup('authenticate', async ({ page }) => {
   await page.getByRole('textbox', { name: 'Enter Your Password' }).fill('password123');
   await page.getByRole('textbox', { name: 'Enter Your Phone' }).fill('123456789');
   await page.getByRole('textbox', { name: 'Enter Your Address' }).fill('uitest address');
-  await page.getByPlaceholder('Enter Your DOB').fill('1998-05-08');
   await page.getByRole('textbox', { name: 'What is Your Favorite sports' }).fill('tennis');
   await page.getByRole('button', { name: 'REGISTER' }).click();
 

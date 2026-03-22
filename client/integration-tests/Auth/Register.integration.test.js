@@ -1,3 +1,4 @@
+// Teo Kim Han, A0273551E
 import React from 'react';
 import { render, fireEvent, waitFor, screen } from '@testing-library/react';
 import axios from 'axios';
@@ -38,7 +39,6 @@ describe('Register-Login Frontend Integration Test', () => {
         password: 'Password123!',
         phone: '1234567890',
         address: '123 Test St',
-        DOB: '1990-01-01',
         answer: 'Soccer'
     };
 
@@ -61,7 +61,6 @@ describe('Register-Login Frontend Integration Test', () => {
         fireEvent.change(screen.getByPlaceholderText('Enter Your Password'), { target: { value: user.password } });
         fireEvent.change(screen.getByPlaceholderText('Enter Your Phone'), { target: { value: user.phone } });
         fireEvent.change(screen.getByPlaceholderText('Enter Your Address'), { target: { value: user.address } });
-        fireEvent.change(screen.getByPlaceholderText('Enter Your DOB'), { target: { value: user.DOB } });
         fireEvent.change(screen.getByPlaceholderText('What is Your Favorite sports'), { target: { value: user.answer } });
         fireEvent.click(screen.getByText('REGISTER'));
 
@@ -89,7 +88,6 @@ describe('Register-Login Frontend Integration Test', () => {
         fireEvent.change(screen.getByPlaceholderText('Enter Your Password'), { target: { value: user.password } });
         fireEvent.change(screen.getByPlaceholderText('Enter Your Phone'), { target: { value: user.phone } });
         fireEvent.change(screen.getByPlaceholderText('Enter Your Address'), { target: { value: user.address } });
-        fireEvent.change(screen.getByPlaceholderText('Enter Your DOB'), { target: { value: user.DOB } });
         fireEvent.change(screen.getByPlaceholderText('What is Your Favorite sports'), { target: { value: user.answer } });
         fireEvent.click(screen.getByText('REGISTER'));
 
@@ -112,7 +110,6 @@ describe('Register-Login Frontend Integration Test', () => {
         fireEvent.change(screen.getByPlaceholderText('Enter Your Password'), { target: { value: user.password } });
         fireEvent.change(screen.getByPlaceholderText('Enter Your Phone'), { target: { value: user.phone } });
         fireEvent.change(screen.getByPlaceholderText('Enter Your Address'), { target: { value: user.address } });
-        fireEvent.change(screen.getByPlaceholderText('Enter Your DOB'), { target: { value: user.DOB } });
         fireEvent.change(screen.getByPlaceholderText('What is Your Favorite sports'), { target: { value: user.answer } });
         fireEvent.click(screen.getByText('REGISTER'));
 

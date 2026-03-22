@@ -24,7 +24,6 @@ describe('Register Component', () => {
     fireEvent.change(screen.getByPlaceholderText('Enter Your Password'), { target: { value: 'password123' } });
     fireEvent.change(screen.getByPlaceholderText('Enter Your Phone'), { target: { value: '1234567890' } });
     fireEvent.change(screen.getByPlaceholderText('Enter Your Address'), { target: { value: '123 Street' } });
-    fireEvent.change(screen.getByPlaceholderText('Enter Your DOB'), { target: { value: '2000-01-01' } });
     fireEvent.change(screen.getByPlaceholderText('What is Your Favorite sports'), { target: { value: 'Football' } });
   };
 
@@ -61,7 +60,6 @@ describe('Register Component', () => {
     expect(screen.getByPlaceholderText('Enter Your Password').value).toBe('');
     expect(screen.getByPlaceholderText('Enter Your Phone').value).toBe('');
     expect(screen.getByPlaceholderText('Enter Your Address').value).toBe('');
-    expect(screen.getByPlaceholderText('Enter Your DOB').value).toBe('');
     expect(screen.getByPlaceholderText('What is Your Favorite sports').value).toBe('');
   });
 
@@ -73,7 +71,6 @@ describe('Register Component', () => {
     expect(screen.getByPlaceholderText('Enter Your Password').value).toBe('password123');
     expect(screen.getByPlaceholderText('Enter Your Phone').value).toBe('1234567890');
     expect(screen.getByPlaceholderText('Enter Your Address').value).toBe('123 Street');
-    expect(screen.getByPlaceholderText('Enter Your DOB').value).toBe('2000-01-01');
     expect(screen.getByPlaceholderText('What is Your Favorite sports').value).toBe('Football');
   });
 
@@ -116,15 +113,6 @@ describe('Register Component', () => {
   it('should not make a post request if address is empty', async () => {
     fillAllEntries();
     fireEvent.change(screen.getByPlaceholderText('Enter Your Address'), { target: { value: '' } });
-
-    fireEvent.click(screen.getByText('REGISTER'));
-
-    expect(axios.post).not.toHaveBeenCalled();
-  });
-
-  it('should not make a post request if DOB is empty', async () => {
-    fillAllEntries();
-    fireEvent.change(screen.getByPlaceholderText('Enter Your DOB'), { target: { value: '' } });
 
     fireEvent.click(screen.getByText('REGISTER'));
 

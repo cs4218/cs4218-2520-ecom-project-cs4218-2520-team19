@@ -36,7 +36,14 @@ export default defineConfig({
   /* Configure projects for major browsers */
   projects: [
     // Setup project
-    { name: 'setup', testMatch: /.*\.setup\.js/ },
+    { name: 'user setup', 
+      testMatch: /.*\.setup\.js/,
+      teardown: 'user teardown',
+    },
+    {
+      name: 'user teardown',
+      testMatch: /.*\.teardown\.js/,
+    },
     {
       name: 'chromium',
       use: { 
@@ -44,7 +51,7 @@ export default defineConfig({
         // Use prepared auth state.
         storageState: 'playwright/.auth/user.json',
       },
-      dependencies: ['setup'],
+      dependencies: ['user setup'],
     },
 
     /* Test against mobile viewports. */

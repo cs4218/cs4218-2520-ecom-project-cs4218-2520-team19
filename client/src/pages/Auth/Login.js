@@ -29,7 +29,6 @@ const Login = () => {
         email,
         password,
       });
-      console.log(res);
       if (res && res.data.success) {
         toast.success(res.data.message, {
             duration: 5000,
@@ -54,7 +53,7 @@ const Login = () => {
       }
     } catch (error) {
       console.log(error);
-      toast.error(error.response.data.message);
+      toast.error(error?.response?.data?.message || error?.message || "Something went wrong");
     }
   };
   return (

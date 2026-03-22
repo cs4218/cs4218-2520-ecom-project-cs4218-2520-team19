@@ -13,7 +13,6 @@ const Register = () => {
   const [password, setPassword] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
-  const [DOB, setDOB] = useState("");
   const [answer, setAnswer] = useState("");
   const [auth] = useAuth();
   const navigate = useNavigate();
@@ -36,7 +35,6 @@ const Register = () => {
         password,
         phone,
         address,
-        DOB,
         answer,
       });
       if (res && res.data.success) {
@@ -47,7 +45,7 @@ const Register = () => {
       }
     } catch (error) {
       console.log(error);
-      toast.error(error.response.data.message);
+      toast.error(error?.response?.data?.message || error?.message || "Something went wrong");
     }
   };
 
@@ -109,17 +107,6 @@ const Register = () => {
               className="form-control"
               id="exampleInputaddress1"
               placeholder="Enter Your Address"
-              required
-            />
-          </div>
-          <div className="mb-3">
-            <input
-              type="Date"
-              value={DOB}
-              onChange={(e) => setDOB(e.target.value)}
-              className="form-control"
-              id="exampleInputDOB1"
-              placeholder="Enter Your DOB"
               required
             />
           </div>

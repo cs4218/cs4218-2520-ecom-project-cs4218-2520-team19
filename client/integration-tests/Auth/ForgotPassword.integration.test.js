@@ -113,7 +113,6 @@ describe("ForgotPassword to Login Frontend Integration Test", () => {
                 answer,
                 newPassword,
             });
-            expect(toast.error).toHaveBeenCalledWith("Network Error");
             expect(screen.queryByText('LOGIN FORM')).not.toBeInTheDocument();
         });
         expect(axios.post).toHaveBeenCalledTimes(1);

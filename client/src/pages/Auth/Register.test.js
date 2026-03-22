@@ -15,6 +15,9 @@ jest.mock("../../components/Layout", () => ({
   __esModule: true,
   default: ({ children }) => <div data-testid="layout">{children}</div>,
 }));
+jest.mock('../../context/auth', () => ({
+  useAuth: () => [null, jest.fn()]
+}));
 
 
 describe('Register Component', () => {

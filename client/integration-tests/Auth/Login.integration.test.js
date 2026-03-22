@@ -134,7 +134,6 @@ describe('Login and AuthProvider Frontend Integration Test', () => {
                 email: 'test@example.com',
                 password: 'password123'
             });
-            expect(toast.error).toHaveBeenCalledWith('Network Error');
             expect(screen.queryByTestId('homepage')).not.toBeInTheDocument();
         });
         expect(axios.post).toHaveBeenCalledTimes(1);

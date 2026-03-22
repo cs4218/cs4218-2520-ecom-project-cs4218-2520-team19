@@ -5,12 +5,21 @@ import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import "../../styles/AuthStyles.css";
 import { useAuth } from "../../context/auth";
+import { useEffect } from "react";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [auth, setAuth] = useAuth();
   const navigate = useNavigate();
+  
+  // prevent access to login page when user is already logged in
+  useEffect(() => {
+    if (auth && auth.token) {
+      toast.error("You are already logged in");
+      navigate("/");
+    }
+  }, [auth]);
 
   // form function
   const handleSubmit = async (e) => {
@@ -44,7 +53,7 @@ const Login = () => {
       }
     } catch (error) {
       console.log(error);
-      toast.error(error.message);
+      toast.error(error?.response?.data?.message || error?.message || "Something went wrong");
     }
   };
   return (

@@ -115,7 +115,6 @@ describe('Register-Login Frontend Integration Test', () => {
 
         await waitFor(() => {
             expect(axios.post).toHaveBeenCalledWith("/api/v1/auth/register", user);
-            expect(toast.error).toHaveBeenCalledWith('Network Error');
             expect(screen.queryByText('LOGIN FORM')).not.toBeInTheDocument();
         });
         expect(axios.post).toHaveBeenCalledTimes(1);

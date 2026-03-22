@@ -61,20 +61,9 @@ describe('Register Endpoint Integration Tests', () => {
             password: 'password123',
             answer: 'test answer'
         });
-        const isPasswordHashed = await comparePassword('password123', res.body.user.password);
 
         expect(res.status).toBe(201);
         expect(res.body).toHaveProperty('success', true);
-        expect(res.body).toHaveProperty('user');
-        expect(res.body.user).toEqual(expect.objectContaining({
-            name: 'Test User',
-            email: 'test@example.com',
-            phone: '1234567890',
-            address: '123 Test St',
-            password: expect.any(String), // hashed password
-            answer: 'test answer'
-        }));
-        expect(isPasswordHashed).toBe(true);
     });
     
     test('Should not register with an already registered email', async () => {

@@ -218,6 +218,18 @@ To begin unit testing with Jest in your project, follow these steps:
      npm run test:backend
      ```
 
+   - **UI tests**
+
+     ```bash
+     npm run test:playwright
+     ```
+
+   - **UI tests with isolated env**
+
+     ```bash
+     npm run test:playwright:isolated
+     ```  
+
    - **All the tests**
      ```bash
      npm run test

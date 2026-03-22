@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 // Varatharaju Mithuna, A0281223N
 // test-env-files/testServerDataHelper.js
 import userModel from "../models/userModel.js";

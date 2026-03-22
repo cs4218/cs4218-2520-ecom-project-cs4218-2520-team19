@@ -162,7 +162,7 @@ const CartPage = () => {
                         })
                       }
                     >
-                      Plase Login to checkout
+                      Please Login to checkout {/*Sun Zhiyuan Felix (A0272474Y) - fix typo*/}
                     </button>
                   )}
                 </div>

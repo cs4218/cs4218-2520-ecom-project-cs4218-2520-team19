@@ -35,6 +35,10 @@ jobs:
         working-directory: ./client
         run: npm install
 
+      # Install Playwright Browsers
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+
       # Run backend tests
       - name: Run backend tests
         run: npm run test:backend
@@ -44,3 +48,11 @@ jobs:
       # Run frontend tests
       - name: Run frontend tests
         run: npm run test:frontend
+
+      # Run Playwright tests
+      - name: Run Playwright tests
+        run: npx playwright test
+
+      # Run Playwright tests in isolated environment
+      - name: Run Playwright tests in isolated environment
+        run: npx playwright test --config=playwright.isolated.config.js

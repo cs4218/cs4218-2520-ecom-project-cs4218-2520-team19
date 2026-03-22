@@ -1,4 +1,4 @@
-// Modem
+// Pawirunsiri Thanakorn (A0266315E)
 
 import { test, expect } from '@playwright/test';
 import { seededAdmin } from './seededAdmin.js';

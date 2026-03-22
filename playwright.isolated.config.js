@@ -13,6 +13,10 @@ export default defineConfig({
   use: {
     baseURL: 'http://localhost:3000',
     trace: 'on-first-retry',
+      headless: false,   // run browser with UI
+      viewport: { width: 1280, height: 720 },
+      video: 'on',       // record video
+      screenshot: 'only-on-failure',
     storageState: { cookies: [], origins: [] },
   },
   projects: [

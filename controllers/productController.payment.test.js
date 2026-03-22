@@ -28,11 +28,19 @@ const mockGateway = {
 braintree.BraintreeGateway = jest.fn().mockReturnValue(mockGateway);
 braintree.Environment = { Sandbox: "sandbox" };
 
-productController.initializeGateway();
+const originalEnv = { ...process.env };
 
 describe("brainTreeTokenController", () => {
+    beforeEach(() => {
+        process.env.BRAINTREE_MERCHANT_ID = "test-merchant";
+        process.env.BRAINTREE_PUBLIC_KEY = "test-public";
+        process.env.BRAINTREE_PRIVATE_KEY = "test-private";
+        productController.initializeGateway();
+    });
+
     afterEach(() => {
         jest.clearAllMocks();
+        process.env = { ...originalEnv };
     });
 
     test("successful token generation", async () => {
@@ -65,8 +73,16 @@ describe("brainTreeTokenController", () => {
 });
 
 describe("brainTreePaymentController", () => {
+    beforeEach(() => {
+        process.env.BRAINTREE_MERCHANT_ID = "test-merchant";
+        process.env.BRAINTREE_PUBLIC_KEY = "test-public";
+        process.env.BRAINTREE_PRIVATE_KEY = "test-private";
+        productController.initializeGateway();
+    });
+
     afterEach(() => {
         jest.clearAllMocks();
+        process.env = { ...originalEnv };
     });
 
     test("successful payment processing", async () => {

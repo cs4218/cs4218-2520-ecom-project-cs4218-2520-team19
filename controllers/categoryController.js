@@ -1,15 +1,20 @@
+// A0272474Y Sun Zhiyuan Felix
+
 import categoryModel from "../models/categoryModel.js";
 import slugify from "slugify";
 export const createCategoryController = async (req, res) => {
   try {
     const { name } = req.body;
     if (!name) {
-      return res.status(401).send({ message: "Name is required" });
+      return res.status(400).send({ 
+        success: false,
+        message: "Name is required" 
+      });
     }
     const existingCategory = await categoryModel.findOne({ name });
     if (existingCategory) {
-      return res.status(200).send({
-        success: true,
+      return res.status(409).send({
+        success: false,
         message: "Category Already Exists",
       });
     }
@@ -37,6 +42,19 @@ export const updateCategoryController = async (req, res) => {
   try {
     const { name } = req.body;
     const { id } = req.params;
+    if (!name) {
+      return res.status(400).send({ 
+        success: false,
+        message: "Name is required" 
+      });
+    }
+    const existingCategory = await categoryModel.findOne({ name });
+    if (existingCategory) {
+      return res.status(409).send({
+        success: false,
+        message: "Category Already Exists",
+      });
+    }
     const category = await categoryModel.findByIdAndUpdate(
       id,
       { name, slug: slugify(name) },

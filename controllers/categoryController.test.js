@@ -45,9 +45,9 @@ describe("createCategoryController", () => {
         await categoryController.createCategoryController(req, res);
 
         expect(slugify).not.toHaveBeenCalled();
-        expect(res.status).toHaveBeenCalledWith(200);
+        expect(res.status).toHaveBeenCalledWith(409);
         expect(res.send).toHaveBeenCalledWith({
-            success: true,
+            success: false,
             message: "Category Already Exists",
         });
     });
@@ -59,8 +59,9 @@ describe("createCategoryController", () => {
         await categoryController.createCategoryController(req, res);
 
         expect(slugify).not.toHaveBeenCalled();
-        expect(res.status).toHaveBeenCalledWith(401);
+        expect(res.status).toHaveBeenCalledWith(400);
         expect(res.send).toHaveBeenCalledWith({
+            success: false,
             message: "Name is required",
         });
     });
@@ -116,6 +117,7 @@ describe("updateCategoryController", () => {
 
     test("successful category update", async () => {
         const mockCategory = { name: "Updated Category", slug: "updated-category" };
+        categoryModel.findOne = jest.fn().mockResolvedValue(null);
         categoryModel.findByIdAndUpdate = jest.fn().mockResolvedValue(mockCategory);
         const req = { body: { name: "Updated Category" }, params: { id: "1" } };
         const res = mockResponse();
@@ -131,10 +133,40 @@ describe("updateCategoryController", () => {
         });
     });
 
+    test("category name already exists", async () => {
+        categoryModel.findOne = jest.fn().mockResolvedValue({ name: "Existing Category" });
+        const req = { body: { name: "Existing Category" }, params: { id: "1" } };
+        const res = mockResponse();
+
+        await categoryController.updateCategoryController(req, res);
+
+        expect(slugify).not.toHaveBeenCalled();
+        expect(res.status).toHaveBeenCalledWith(409);
+        expect(res.send).toHaveBeenCalledWith({
+            success: false,
+            message: "Category Already Exists",
+        });
+    });
+
+    test("no name given in request body", async () => {
+        const req = { body: {}, params: { id: "1" } };
+        const res = mockResponse();
+
+        await categoryController.updateCategoryController(req, res);
+
+        expect(slugify).not.toHaveBeenCalled();
+        expect(res.status).toHaveBeenCalledWith(400);
+        expect(res.send).toHaveBeenCalledWith({
+            success: false,
+            message: "Name is required",
+        });
+    });
+
     test("error during category update", async () => {
         jest.spyOn(console, "log").mockImplementation(() => {});
 
         const mockError = new Error("Database error");
+        categoryModel.findOne = jest.fn().mockResolvedValue(null);
         categoryModel.findByIdAndUpdate = jest.fn().mockRejectedValue(mockError);
         const req = { body: { name: "Updated Error" }, params: { id: "2" } };
         const res = mockResponse();

@@ -26,7 +26,7 @@ const CreateCategory = () => {
       }
     } catch (error) {
       console.log(error);
-      toast.error("Something went wrong in creating category");
+      toast.error(error.response?.data?.message || "Something went wrong in creating category"); // A0272474Y Sun Zhiyuan Felix
     }
   };
 
@@ -41,7 +41,7 @@ const CreateCategory = () => {
       }
     } catch (error) {
       console.log(error);
-      toast.error("Something went wrong in getting category");
+      toast.error(error.response?.data?.message || "Something went wrong in getting category");
     }
   };
 
@@ -68,7 +68,7 @@ const CreateCategory = () => {
       }
     } catch (error) {
       console.log(error); // Sun Zhiyuan Felix (A0272474Y) - add error logging for debugging
-      toast.error("Something went wrong in updating category");
+      toast.error(error.response?.data?.message || "Something went wrong in updating category");
     }
   };
   //delete category
@@ -85,7 +85,7 @@ const CreateCategory = () => {
       }
     } catch (error) {
       console.log(error); // Sun Zhiyuan Felix (A0272474Y) - add error logging for debugging
-      toast.error("Something went wrong in deleting category");
+      toast.error(error.response?.data?.message || "Something went wrong in deleting category");
     }
   };
   return (

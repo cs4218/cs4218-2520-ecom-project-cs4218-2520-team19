@@ -16,10 +16,13 @@ const testUser = Object.freeze({
 });
 
 const createTestUser = async () => {
-  await connectDB();
+  console.log('Creating test user...');
   const hashedPassword = await hashPassword(testUser.password);
-  await new userModel({ ...testUser, password: hashedPassword }).save();
-  await disconnectDB();
+  if (await userModel.findOne({ email: testUser.email })) {
+    await userModel.findOneAndUpdate({ email: testUser.email }, { ...testUser, password: hashedPassword });
+  } else {
+    await userModel.create({ ...testUser, password: hashedPassword });
+  }
 };
 
 const deleteTestUser = async () => {

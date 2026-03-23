@@ -25,7 +25,7 @@ const Orders = () => {
 
   useEffect(() => {
     if (auth?.token) getOrders();
-  }, [auth?.token, auth?.user]);
+  }, [auth?.token, auth?.user]); //Varatharaju Mithuna, A0281223N
   return (
     <Layout title={"Your Orders"}>
       <div className="container-flui p-3 m-3 dashboard">

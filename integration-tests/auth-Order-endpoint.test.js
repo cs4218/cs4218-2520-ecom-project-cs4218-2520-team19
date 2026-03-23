@@ -29,8 +29,6 @@ let mongoServer;
 beforeAll(async () => {
     mongoServer = await MongoMemoryServer.create(); 
     const uri = mongoServer.getUri("orders-test-db"); // unique name
-
-    await mongoose.disconnect(); // ensures clean connection
     await mongoose.connect(uri);
 });
 

@@ -24,8 +24,8 @@ let mongoServer;
 
 beforeAll(async () => {
     mongoServer = await MongoMemoryServer.create();
-    const uri = mongoServer.getUri();
 
+    const uri = mongoServer.getUri("updateProfile-test-db"); // different name
     await mongoose.connect(uri);
 });
 

@@ -17,7 +17,8 @@ let mongoServer;
 // Set up in-memory MongoDB server before running tests and connect mongoose to it
 beforeAll(async () => {
     mongoServer = await MongoMemoryServer.create();
-    const uri = mongoServer.getUri();
+
+    const uri = mongoServer.getUri("controller-test-db"); // different name
     await mongoose.connect(uri);
 });
 

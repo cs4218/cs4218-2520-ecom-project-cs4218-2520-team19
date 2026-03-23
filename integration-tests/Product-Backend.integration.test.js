@@ -7,7 +7,7 @@ import express from "express";
 import productRoutes from "../routes/productRoutes.js";
 import userModel from "../models/userModel.js";
 import JWT from "jsonwebtoken";
-
+process.env.JWT_SECRET = process.env.JWT_SECRET || "testsecret";
 let token;
 let mongoServer;
 

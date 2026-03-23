@@ -28,8 +28,6 @@ beforeAll(async () => {
     mongoServer = await MongoMemoryServer.create();
 
     const uri = mongoServer.getUri("updateStatus-test-db"); // different name
-
-    await mongoose.disconnect();
     await mongoose.connect(uri);
 });
 

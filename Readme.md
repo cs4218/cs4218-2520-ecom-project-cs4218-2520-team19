@@ -41,7 +41,7 @@ https://github.com/cs4218/cs4218-2520-ecom-project-cs4218-2520-team19/actions/ru
 
 ---
 
-### Thanakorn Pawirunsiri
+### Pawirunsiri Thanakorn
 
 - **Product Features**
   - **Client related files (`/client/src`)**
@@ -102,6 +102,16 @@ https://github.com/cs4218/cs4218-2520-ecom-project-cs4218-2520-team19/actions/ru
   - Search-related
   - Forgot password
   - Restriction of admin-routes to non-admins
+
+---
+
+### Pawirunsiri Thanakorn
+
+- **Integration Tests**
+  - Product controllers, Product frontend pages
+- **UI Tests**
+  - Product-related
+  - Logout-related
 
 ## 1. Project Introduction
 

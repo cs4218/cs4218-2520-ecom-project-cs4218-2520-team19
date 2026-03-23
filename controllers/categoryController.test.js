@@ -1,10 +1,12 @@
 // Sun Zhiyuan Felix (A0272474Y)
 
 import categoryModel from "../models/categoryModel.js";
+import productModel from "../models/productModel.js";
 import slugify from "slugify";
 import * as categoryController from "./categoryController.js";
 
 jest.mock("../models/categoryModel.js");
+jest.mock("../models/productModel.js");
 jest.mock("slugify", () => jest.fn((s) => s));
 
 const mockResponse = () => {
@@ -45,9 +47,9 @@ describe("createCategoryController", () => {
         await categoryController.createCategoryController(req, res);
 
         expect(slugify).not.toHaveBeenCalled();
-        expect(res.status).toHaveBeenCalledWith(200);
+        expect(res.status).toHaveBeenCalledWith(409);
         expect(res.send).toHaveBeenCalledWith({
-            success: true,
+            success: false,
             message: "Category Already Exists",
         });
     });
@@ -59,8 +61,9 @@ describe("createCategoryController", () => {
         await categoryController.createCategoryController(req, res);
 
         expect(slugify).not.toHaveBeenCalled();
-        expect(res.status).toHaveBeenCalledWith(401);
+        expect(res.status).toHaveBeenCalledWith(400);
         expect(res.send).toHaveBeenCalledWith({
+            success: false,
             message: "Name is required",
         });
     });
@@ -116,6 +119,7 @@ describe("updateCategoryController", () => {
 
     test("successful category update", async () => {
         const mockCategory = { name: "Updated Category", slug: "updated-category" };
+        categoryModel.findOne = jest.fn().mockResolvedValue(null);
         categoryModel.findByIdAndUpdate = jest.fn().mockResolvedValue(mockCategory);
         const req = { body: { name: "Updated Category" }, params: { id: "1" } };
         const res = mockResponse();
@@ -131,10 +135,40 @@ describe("updateCategoryController", () => {
         });
     });
 
+    test("category name already exists", async () => {
+        categoryModel.findOne = jest.fn().mockResolvedValue({ name: "Existing Category" });
+        const req = { body: { name: "Existing Category" }, params: { id: "1" } };
+        const res = mockResponse();
+
+        await categoryController.updateCategoryController(req, res);
+
+        expect(slugify).not.toHaveBeenCalled();
+        expect(res.status).toHaveBeenCalledWith(409);
+        expect(res.send).toHaveBeenCalledWith({
+            success: false,
+            message: "Category Already Exists",
+        });
+    });
+
+    test("no name given in request body", async () => {
+        const req = { body: {}, params: { id: "1" } };
+        const res = mockResponse();
+
+        await categoryController.updateCategoryController(req, res);
+
+        expect(slugify).not.toHaveBeenCalled();
+        expect(res.status).toHaveBeenCalledWith(400);
+        expect(res.send).toHaveBeenCalledWith({
+            success: false,
+            message: "Name is required",
+        });
+    });
+
     test("error during category update", async () => {
         jest.spyOn(console, "log").mockImplementation(() => {});
 
         const mockError = new Error("Database error");
+        categoryModel.findOne = jest.fn().mockResolvedValue(null);
         categoryModel.findByIdAndUpdate = jest.fn().mockRejectedValue(mockError);
         const req = { body: { name: "Updated Error" }, params: { id: "2" } };
         const res = mockResponse();
@@ -245,12 +279,14 @@ describe("deleteCategoryController", () => {
     });
 
     test("successful deletion of a category", async () => {
+        productModel.deleteMany = jest.fn().mockResolvedValue({ deletedCount: 2 });
         categoryModel.findByIdAndDelete = jest.fn();
         const req = { params: { id: 1 } };
         const res = mockResponse();
 
         await categoryController.deleteCategoryController(req, res);
 
+        expect(productModel.deleteMany).toHaveBeenCalledWith({ category: 1 });
         expect(res.status).toHaveBeenCalledWith(200);
         expect(res.send).toHaveBeenCalledWith({
             success: true,
@@ -262,6 +298,7 @@ describe("deleteCategoryController", () => {
         jest.spyOn(console, "log").mockImplementation(() => {});
 
         const mockError = new Error("Database error");
+        productModel.deleteMany = jest.fn().mockRejectedValue(mockError);
         categoryModel.findByIdAndDelete = jest.fn().mockRejectedValue(mockError);
         const req = { params: { id: 1 } };
         const res = mockResponse();

@@ -23,9 +23,9 @@ app.use('/api/v1/auth', authRoutes);
 let mongoServer;
 
 beforeAll(async () => {
-    mongoServer = await MongoMemoryServer.create();
-    const uri = mongoServer.getUri();
+    const uri = mongoServer.getUri("profile-test-db"); // unique name
 
+    await mongoose.disconnect(); // ensures clean connection
     await mongoose.connect(uri);
 });
 

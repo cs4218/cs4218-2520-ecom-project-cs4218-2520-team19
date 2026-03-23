@@ -12,10 +12,15 @@ import CategoryProduct from '../CategoryProduct';
 // Mocks
 jest.mock('axios');
 jest.mock('react-hot-toast');
-jest.mock('../../components/Layout', () => ({ children }) => (
-  <div>{children}</div>
+jest.mock('./../../components/Layout', () => ({ children }) => (
+  <div data-testid="layout">{children}</div>
 ));
-jest.mock('../../components/AdminMenu', () => () => <div>Admin Menu</div>);
+jest.mock('./../../components/AdminMenu', () => () => (
+  <div data-testid="admin-menu" />
+));
+jest.mock('../../context/cart', () => ({
+  useCart: jest.fn(() => [[], jest.fn()]),
+}));
 
 jest.mock('antd', () => {
   const MockSelect = ({ onChange, placeholder, children, value }) => (
@@ -32,6 +37,13 @@ jest.mock('antd', () => {
   );
   return { Select: MockSelect };
 });
+
+const mockNavigate = jest.fn();
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useParams: () => ({ slug: 'test-product' }),
+  useNavigate: () => mockNavigate,
+}));
 
 // Mock data
 const mockCategory = {
@@ -89,16 +101,13 @@ describe('Product Pages Frontend Integration Tests', () => {
     axios.post.mockResolvedValueOnce({
       data: { success: true, products: mockProduct },
     });
-
     const { unmount } = renderWithRouter(<CreateProduct />, {
       path: '/dashboard/admin/create-product',
       route: '/dashboard/admin/create-product',
     });
-
     await waitFor(() =>
       expect(screen.getByPlaceholderText('write a name')).toBeInTheDocument(),
     );
-
     fireEvent.change(screen.getByPlaceholderText('write a name'), {
       target: { value: 'Test Laptop' },
     });
@@ -114,9 +123,7 @@ describe('Product Pages Frontend Integration Tests', () => {
     fireEvent.change(screen.getByTestId('Select a category'), {
       target: { value: 'cat123' },
     });
-
     fireEvent.click(screen.getByText('CREATE PRODUCT'));
-
     await waitFor(() => {
       expect(axios.post).toHaveBeenCalledWith(
         '/api/v1/product/create-product',
@@ -126,18 +133,14 @@ describe('Product Pages Frontend Integration Tests', () => {
         'Product Created Successfully',
       );
     });
-
     unmount();
-
     axios.get
       .mockResolvedValueOnce({ data: { product: mockProduct } })
       .mockResolvedValueOnce({ data: { products: [mockRelatedProduct] } });
-
     renderWithRouter(<ProductDetails />, {
       path: '/product/:slug',
       route: '/product/test-laptop',
     });
-
     await waitFor(() => {
       expect(screen.getByText('Name : Test Laptop')).toBeInTheDocument();
       expect(
@@ -146,7 +149,6 @@ describe('Product Pages Frontend Integration Tests', () => {
       expect(screen.getByText(/\$1,500\.00/)).toBeInTheDocument();
       expect(screen.getByText('Category : Electronics')).toBeInTheDocument();
     });
-
     expect(screen.getByText('Related Monitor')).toBeInTheDocument();
   });
 

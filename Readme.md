@@ -113,6 +113,19 @@ https://github.com/cs4218/cs4218-2520-ecom-project-cs4218-2520-team19/actions/ru
   - Product-related
   - Logout-related
 
+---
+
+### Sun Zhiyuan Felix
+
+- **Integration Tests**
+  - Frontend
+    - CreateCategory, Categories, CategoryProduct
+  - Backend
+    - Category Controller and Route
+- **UI Tests**
+  - Admin category CRUD
+  - User cannot checkout scenarios
+
 ## 1. Project Introduction
 
 Virtual Vault is a full-stack MERN (MongoDB, Express.js, React.js, Node.js) e-commerce website, offering seamless connectivity and user-friendly features. The platform provides a robust framework for online shopping. The website is designed to adapt to evolving business needs and can be efficiently extended.

@@ -125,6 +125,8 @@ https://github.com/cs4218/cs4218-2520-ecom-project-cs4218-2520-team19/actions/ru
 - **UI Tests**
   - Admin category CRUD
   - User cannot checkout scenarios
+    
+---
 
 ### Varatharaju Mithuna
 - **Integration Tests**

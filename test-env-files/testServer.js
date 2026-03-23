@@ -14,6 +14,7 @@ import cors from "cors";
 import { MongoMemoryServer } from "mongodb-memory-server";
 import mongoose from "mongoose";
 import { registerTestRoutes, seedPlaywrightAdmin } from "./testServerHelpers.js";
+import testOrderRoutes from "./testOrderRoutes.js";
 
 let mongoServer;
 let server;
@@ -32,6 +33,7 @@ app.use(morgan('dev'));
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/category", categoryRoutes);
 app.use("/api/v1/product", productRoutes);
+app.use("/api/v1/test", testOrderRoutes);
 
 // rest api
 
@@ -42,7 +44,11 @@ app.get('/', (req,res) => {
 const PORT = process.env.PORT || 6060;
 
 async function startTestServer() {
-    mongoServer = await MongoMemoryServer.create();
+    mongoServer = await MongoMemoryServer.create({
+        instance: {
+            startupTimeoutMS: 30000,
+        },
+    });
     const mongoUri = mongoServer.getUri();
 
     process.env.MONGO_URL = mongoUri;

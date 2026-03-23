@@ -87,7 +87,7 @@ const HomePage = () => {
     setChecked(all);
   };
   useEffect(() => {
-    if (!checked.length || !radio.length) getAllProducts();
+    if (!checked.length && !radio.length) getAllProducts();
   }, [checked.length, radio.length]);
 
   useEffect(() => {
@@ -132,11 +132,11 @@ const HomePage = () => {
           {/* price filter */}
           <h4 className="text-center mt-4">Filter By Price</h4>
           <div className="d-flex flex-column">
-            <Radio.Group onChange={(e) => setRadio(e.target.value)}>
+            <Radio.Group onChange={(e) => setRadio(JSON.parse(e.target.value))}>
               {Prices?.map((p) => (
-                <div key={p._id}>
-                  <Radio value={p.array}>{p.name}</Radio>
-                </div>
+                  <div key={p._id}>
+                    <Radio value={JSON.stringify(p.array)}>{p.name}</Radio>
+                  </div>
               ))}
             </Radio.Group>
           </div>
@@ -211,7 +211,6 @@ const HomePage = () => {
                 ) : (
                   <>
                     {" "}
-                    Loadmore <AiOutlineReload />
                   </>
                 )}
               </button>

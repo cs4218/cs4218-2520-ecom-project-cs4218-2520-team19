@@ -1,9 +1,11 @@
 // Teo Kim Han, A0273551E
+import dotenv from 'dotenv';
 import { test, expect } from "@playwright/test";
-import { connectDB, disconnectDB } from "../config/db.js";
-import userModel from '../models/userModel.js';
-import { testUser } from './test-user.js';
+import { connectDB, disconnectDB } from "../../config/db.js";
+import userModel from '../../models/userModel.js';
+import { testUser, resetTestUserPassword } from './test-user.js';
 
+dotenv.config();
 // reset authentication state for this file to avoid being authenticated
 test.use({ storageState: { cookies: [], origins: [] } });
 
@@ -34,6 +36,11 @@ test('forgot password succeeds for valid user', async ({ page }) => {
         await page.getByRole('button', { name: 'LOGIN' }).click();
         await expect(page).toHaveURL('/');
     });
+
+    // reset password back to original
+    await connectDB();
+    await resetTestUserPassword(testUser.password);
+    await disconnectDB();
 });
 
 test('forgot password fails for invalid user', async ({ page }) => {

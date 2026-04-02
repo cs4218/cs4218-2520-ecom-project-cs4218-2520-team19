@@ -2,7 +2,7 @@ import { test as setup } from '@playwright/test';
 import path from 'path';
 import { testUser } from './test-user.js';
 
-const authFile = path.join(__dirname, '../playwright/.auth/user.json');
+const authFile = path.join(__dirname, '../../playwright/.auth/user.json');
 
 setup('log in test user', async ({ page }) => {
   // Login with the registered user

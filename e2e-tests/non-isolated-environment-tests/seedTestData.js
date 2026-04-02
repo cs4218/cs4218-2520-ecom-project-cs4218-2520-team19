@@ -1,6 +1,9 @@
-import { connectDB, disconnectDB } from "./config/db.js";
-import { createTestUser } from "./e2e-tests/test-user.js";
-import { createTestData } from "./e2e-tests/test-products.js";
+import dotenv from 'dotenv'
+import { connectDB, disconnectDB } from "../../config/db.js";
+import { createTestUser } from "./test-user.js";
+import { createTestData } from "./test-products.js";
+
+dotenv.config()
 
 const seed = async () => {
   await connectDB();

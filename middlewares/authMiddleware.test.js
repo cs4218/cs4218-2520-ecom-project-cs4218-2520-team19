@@ -82,7 +82,7 @@ describe('isAdmin tests', () => {
         await isAdmin(req, res, next);
 
         expect(userModel.findById).toHaveBeenCalledWith('123');
-        expect(res.status).toHaveBeenCalledWith(401);
+        expect(res.status).toHaveBeenCalledWith(403);
         expect(res.send).toHaveBeenCalledWith({
                 success: false,
                 message: "UnAuthorized Access",
@@ -98,7 +98,7 @@ describe('isAdmin tests', () => {
 
         expect(userModel.findById).toHaveBeenCalledWith('123');
         expect(consoleLogSpy).toHaveBeenCalledWith(error);
-        expect(res.status).toHaveBeenCalledWith(401);
+        expect(res.status).toHaveBeenCalledWith(403);
         expect(res.send).toHaveBeenCalledWith({
             success: false,
             error: error,

@@ -25,6 +25,9 @@ export default {
     "<rootDir>/client/**/*.integration.test.js"
   ],
 
+  // keep frontend coverage separate so backend runs do not overwrite it
+  coverageDirectory: "<rootDir>/coverage/frontend",
+
   // jest code coverage
   collectCoverage: true,
   coverageThreshold: {

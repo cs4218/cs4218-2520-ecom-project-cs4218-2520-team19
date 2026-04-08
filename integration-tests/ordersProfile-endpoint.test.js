@@ -124,17 +124,18 @@ const createSampleOrders = async () => {
         products: products.map(p => p._id),
         payment: {success: true},
         buyer: user._id,
-        status: "Delivered",
-        createdAt: new Date()
+        status: "Delivered"
     });
+
+    await new Promise((resolve) => setTimeout(resolve, 10));
 
     const order2 = await Order.create({
         products: products.map(p => p._id),
         payment: {success: false},
         buyer: user._id,
-        status: "Processing",
-        createdAt: new Date()
+        status: "Processing"
     });
+
     return { user, orders: [order1, order2] };
 }
 

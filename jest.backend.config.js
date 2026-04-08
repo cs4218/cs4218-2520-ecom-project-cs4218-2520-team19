@@ -8,6 +8,9 @@ export default {
   // which test to run
   testMatch: ["<rootDir>/*/*.test.js"],
 
+  // keep backend coverage separate so frontend runs do not overwrite it
+  coverageDirectory: "<rootDir>/coverage/backend",
+
   // jest code coverage
   collectCoverage: true,
   coverageThreshold: {

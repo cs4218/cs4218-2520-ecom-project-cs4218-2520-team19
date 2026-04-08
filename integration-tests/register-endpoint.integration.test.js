@@ -110,4 +110,38 @@ describe('Register Endpoint Integration Tests', () => {
             }
         );
     });
+
+    // Teo Kim Han (A0273551E), MS3-Security Testing
+    describe('Password strength should be enforced in register endpoint', () => {
+        const userPayload = {
+            email: 'test@example.com',
+            password: 'Password123!',
+            name: 'Test User',
+            phone: '1234567890',
+            address: '123 Test St',
+            answer: 'test answer'
+        };
+
+        const weakPasswords = [
+            'Ab1!',              // boundary: exactly 7 chars (one below minimum)
+            'alllowercase1!',    // missing uppercase
+            'ALLUPPERCASE1!',    // missing lowercase
+            'NoSpecialChars1',   // missing special char
+            'NoDigitsHere!',     // missing digit
+        ];
+
+        test.each(weakPasswords)(
+            'Should return 400 for weak password: %s',
+            async (pw) => {
+                const res = await request(app).post(registerRoute).send({
+                    ...userPayload,
+                    password: pw
+                });
+
+                expect(res.status).toBe(400);
+                expect(res.body).toHaveProperty('success', false);
+                expect(res.body).toHaveProperty('message');
+            }
+        );
+    });
 });

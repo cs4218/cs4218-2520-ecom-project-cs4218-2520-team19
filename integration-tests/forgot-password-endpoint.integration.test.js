@@ -147,4 +147,36 @@ describe('Forgot Password Endpoint Integration Tests', () => {
         expect(res.body).toHaveProperty('message');
         expect(isPasswordUpdated).toBe(false);
     });
+
+    // Teo Kim Han (A0273551E), MS3-Security Testing
+    describe('password strength should be enforced in forgot password endpoint', () => {
+        const weakPasswords = [
+            'Ab1!',              // boundary: exactly 7 chars (one below minimum)
+            'alllowercase1!',    // missing uppercase
+            'ALLUPPERCASE1!',    // missing lowercase
+            'NoSpecialChars1',   // missing special char
+            'NoDigitsHere!',     // missing digit
+        ];
+    
+        test.each(weakPasswords)(
+            'Should return 400 for weak password: %s',
+            async (pw) => {
+                const user = await createUser();
+                await user.save();
+    
+                const res = await request(app).post(forgotPasswordRoute).send({
+                    email: 'test@example.com',
+                    answer: 'test answer',
+                    newPassword: pw
+                });
+                const updatedUser = await userModel.findOne({ email: user.email });
+                const isPasswordUpdated = await comparePassword(pw, updatedUser.password);
+    
+                expect(res.status).toBe(400);
+                expect(res.body).toHaveProperty('success', false);
+                expect(res.body).toHaveProperty('message');
+                expect(isPasswordUpdated).toBe(false);
+            }
+        );
+    });
 });

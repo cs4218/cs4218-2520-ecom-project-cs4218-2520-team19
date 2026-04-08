@@ -125,4 +125,47 @@ describe('Login Endpoint Integration Tests', () => {
         expect(res.body).toHaveProperty('success', false);
         expect(res.body).toHaveProperty('message');
     });
+
+    // Teo Kim Han (A0273551E), MS3-Security Testing
+    describe('Rate Limiting Tests', () => {
+        test('Invalid email should not count towards rate limit', async () => {
+            // Make 3 failed login attempts with invalid email
+            for (let i = 0; i < 3; i++) {
+                await request(app).post(loginRoute).send({
+                    email: 'nonexistent@example.com',
+                    password: 'password123'
+                });
+            }
+            const res = await request(app).post(loginRoute).send({
+                email: 'nonexistent@example.com',
+                password: 'password123'
+            });
+
+            expect(res.status).toBe(404);
+            expect(res.body).toHaveProperty('success', false);
+            expect(res.body).toHaveProperty('message');
+        });
+
+
+        test('Should return 429 after exceeding rate limit for password', async () => {
+            const user = await createUser();
+            await user.save();
+
+            // Make 3 failed login attempts
+            for (let i = 0; i < 3; i++) {
+                await request(app).post(loginRoute).send({
+                    email: 'test@example.com',
+                    password: 'WrongPassword123!'
+                });
+            }
+            // 4th attempt should be rate limited
+            const res = await request(app).post(loginRoute).send({
+                email: 'test@example.com',
+                password: 'WrongPassword123!'
+            });
+
+            expect(res.status).toBe(429);
+            expect(res.body).toHaveProperty('message', 'Too many requests, please try again later.');
+        });
+    });
 });

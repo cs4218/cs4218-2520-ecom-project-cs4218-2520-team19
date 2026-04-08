@@ -1,6 +1,6 @@
 // Teo Kim Han, A0273551E
 // Used AI to generate ideas for testing hashPassword
-import { hashPassword, comparePassword } from './authHelper';
+import { hashPassword, comparePassword, checkPasswordStrength } from './authHelper';
 import bcrypt from 'bcrypt';
 
 describe('hashPassword tests', () => {
@@ -79,4 +79,75 @@ describe('comparePassword tests', () => {
         await expect(comparePassword(pw, undefined)).rejects.toThrow();
         await expect(comparePassword(undefined, undefined)).rejects.toThrow();
     });
+});
+
+// Teo Kim Han (A0273551E), MS3-Security Testing
+describe("checkPasswordStrength", () => {
+  it("valid password passes all checks", () => {
+    expect(checkPasswordStrength("Abcdefg1!")).toEqual({ isPasswordValid: true, invalidPasswordReason: null });
+  });
+
+  it("fails if shorter than 8 characters", () => {
+    expect(checkPasswordStrength("Ab1!")).toEqual({
+      isPasswordValid: false,
+      invalidPasswordReason: "Password must be at least 8 characters.",
+    });
+  });
+
+  it("fails if no uppercase letter", () => {
+    expect(checkPasswordStrength("abcdefg1!")).toEqual({
+      isPasswordValid: false,
+      invalidPasswordReason: "Password must contain at least 1 uppercase letter.",
+    });
+  });
+
+  it("fails if no lowercase letter", () => {
+    expect(checkPasswordStrength("ABCDEFG1!")).toEqual({
+      isPasswordValid: false,
+      invalidPasswordReason: "Password must contain at least 1 lowercase letter.",
+    });
+  });
+
+  it("fails if no number", () => {
+    expect(checkPasswordStrength("Abcdefg!")).toEqual({
+      isPasswordValid: false,
+      invalidPasswordReason: "Password must contain at least 1 number.",
+    });
+  });
+
+  it("fails if no special character", () => {
+    expect(checkPasswordStrength("Abcdefg1")).toEqual({
+      isPasswordValid: false,
+      invalidPasswordReason: "Password must contain at least 1 special character.",
+    });
+  });
+
+  it("accepts various special characters", () => {
+    const specials = ["@", "#", "$", "%", "^", "&", "*", "(", ")", "-", "_", "+", "="];
+    specials.forEach((char) => {
+      expect(checkPasswordStrength(`Abcdefg1${char}`)).toEqual({ isPasswordValid: true, invalidPasswordReason: null });
+    });
+  });
+
+  it("fails empty string", () => {
+    expect(checkPasswordStrength("")).toEqual({
+      isPasswordValid: false,
+      invalidPasswordReason: "Password must be at least 8 characters.",
+    });
+  });
+
+  it("passes at exactly 8 characters with all requirements met", () => {
+    expect(checkPasswordStrength("Abcde1!x")).toEqual({ isPasswordValid: true, invalidPasswordReason: null });
+  });
+
+  it("fails for invalid password type", () => {
+    expect(checkPasswordStrength(null)).toEqual({
+      isPasswordValid: false,
+      invalidPasswordReason: "Invalid password: must be a non-empty string.",
+    });
+    expect(checkPasswordStrength(undefined)).toEqual({
+      isPasswordValid: false,
+      invalidPasswordReason: "Invalid password: must be a non-empty string.",
+    });
+  });
 });

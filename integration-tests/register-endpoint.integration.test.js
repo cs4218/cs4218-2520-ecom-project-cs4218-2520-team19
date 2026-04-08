@@ -22,7 +22,7 @@ const registerRoute = '/api/v1/auth/register';
 let mongoServer;
 
 const createUser = async () => {
-    const hashedPassword = await hashPassword('password123');
+    const hashedPassword = await hashPassword('Password123!');
     const user = new userModel({
         name: 'Test User',
         email: 'test@example.com',
@@ -58,7 +58,7 @@ describe('Register Endpoint Integration Tests', () => {
             email: 'test@example.com',
             phone: '1234567890',
             address: '123 Test St',
-            password: 'password123',
+            password: 'Password123!',
             answer: 'test answer'
         });
 
@@ -75,7 +75,7 @@ describe('Register Endpoint Integration Tests', () => {
             email: 'test@example.com',
             phone: '1234567890',
             address: '123 Test St',
-            password: 'password123',
+            password: 'Password123!',
             answer: 'test answer'
         });
         
@@ -87,7 +87,7 @@ describe('Register Endpoint Integration Tests', () => {
     describe('Test Validation Errors', () => {
         const userPayload = {
             email: 'test@example.com',
-            password: 'password123',
+            password: 'Password123!',
             name: 'Test User',
             phone: '1234567890',
             address: '123 Test St',

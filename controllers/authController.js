@@ -1,12 +1,13 @@
 import userModel from "../models/userModel.js";
 import orderModel from "../models/orderModel.js";
 
-import { comparePassword, hashPassword } from "./../helpers/authHelper.js";
+import { comparePassword, hashPassword, checkPasswordStrength } from "./../helpers/authHelper.js";
 import JWT from "jsonwebtoken";
 
 export const registerController = async (req, res) => {
   try {
     const { name, email, password, phone, address, answer } = req.body;
+    const { isPasswordValid, invalidPasswordReason } = checkPasswordStrength(password);
     //validations
     if (!name) {
       return res.status(400).send({ success: false, message: "Name is Required" });
@@ -14,8 +15,8 @@ export const registerController = async (req, res) => {
     if (!email) {
       return res.status(400).send({ success: false, message: "Email is Required" });
     }
-    if (!password) {
-      return res.status(400).send({ success: false, message: "Password is Required" });
+    if (!isPasswordValid) {
+      return res.status(400).send({ success: false, message: invalidPasswordReason });
     }
     if (!phone) {
       return res.status(400).send({ success: false, message: "Phone no is Required" });
@@ -119,14 +120,15 @@ export const loginController = async (req, res) => {
 export const forgotPasswordController = async (req, res) => {
   try {
     const { email, answer, newPassword } = req.body;
+    const { isPasswordValid, invalidPasswordReason } = checkPasswordStrength(newPassword);
     if (!email) {
       return res.status(400).send({ success: false, message: "Email is required" });
     }
     if (!answer) {
       return res.status(400).send({ success: false, message: "Answer is required" });
     }
-    if (!newPassword) {
-      return res.status(400).send({ success: false, message: "New Password is required" });
+    if (!isPasswordValid) {
+      return res.status(400).send({ success: false, message: invalidPasswordReason });
     }
     //check
     const user = await userModel.findOne({ email, answer });

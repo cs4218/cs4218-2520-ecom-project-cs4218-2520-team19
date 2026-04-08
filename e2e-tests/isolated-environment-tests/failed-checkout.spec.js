@@ -6,7 +6,7 @@ import { seededProducts } from './seededProducts.js';
 const testUser = {
     name: 'uitestcheckout',
     email: 'uitestcheckout@email.com',
-    password: 'password123',
+    password: 'StrongPassword123!',
     phone: '123456789',
     address: 'uitestcheckout address',
     answer: 'tennis',

@@ -1,4 +1,4 @@
-import { sanitize, clearWindow } from "isomorphic-dompurify";
+import { sanitize } from "express-xss-sanitizer";
 
 const sanitizeDeep = (value) => {
     if (typeof value === 'string') return sanitize(value);
@@ -13,14 +13,11 @@ const sanitizeDeep = (value) => {
 
 // removes potentially harmful strings like <script>alert('123')</script> from request body
 export const sanitizeRequestBody = (req, res, next) => {
-    console.log(req)
     if ((req.body && typeof req.body === 'object')) {
         req.body = sanitizeDeep(req.body);
-        clearWindow();
     }
     if ((req.fields && typeof req.fields === 'object')) {
         req.fields = sanitizeDeep(req.fields);
-        clearWindow();
     }
     next();
 };

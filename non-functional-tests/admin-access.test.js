@@ -69,7 +69,6 @@ describe('Non-Admins should not be able to access admin-only endpoints', () => {
     test.each(adminRoutes)('Should return 403 Forbidden for non-admin user accessing %s', async (route) => {
         const user = await createUser();
         await user.save();
-
         // Login to get token
         const loginRes = await request(app).post('/api/v1/auth/login').send({
             email: user.email,

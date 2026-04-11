@@ -1,5 +1,6 @@
 import express from "express";
 import { isAdmin, requireSignIn } from "./../middlewares/authMiddleware.js";
+import { sanitizeRequestBody } from "../middlewares/sanitizeMiddleware.js";
 import {
   categoryController,
   createCategoryController,
@@ -16,6 +17,7 @@ router.post(
   "/create-category",
   requireSignIn,
   isAdmin,
+  sanitizeRequestBody,
   createCategoryController
 );
 
@@ -24,6 +26,7 @@ router.put(
   "/update-category/:id",
   requireSignIn,
   isAdmin,
+  sanitizeRequestBody,
   updateCategoryController
 );
 

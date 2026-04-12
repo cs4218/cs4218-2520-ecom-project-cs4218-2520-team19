@@ -16,7 +16,8 @@
     "test:frontend": "node --experimental-vm-modules node_modules/jest/bin/jest.js --config jest.frontend.config.js",
     "test:backend": "node --experimental-vm-modules node_modules/jest/bin/jest.js --config jest.backend.config.js",
     "test:playwright": "npm run test:setup && npx playwright test && npm run test:teardown",
-    "test:playwright:isolated": "npx playwright test --config playwright.isolated.config.js"
+    "test:playwright:isolated": "npx playwright test --config playwright.isolated.config.js",
+    "test:nft:spike": "start-server-and-test \"npm run server:test\" 6060 \"k6 run --out web-dashboard --summary-export=nft-tests/spikeTest/k6-spike-summary.json nft-tests/spikeTest/spike-test.js\""
   },
   "keywords": [],
   "author": "RP",
@@ -54,6 +55,10 @@
     "jest-environment-jsdom": "^29.7.0",
     "mongodb-memory-server": "^11.0.1",
     "sonarqube-scanner": "^4.3.5",
+<<<<<<< HEAD
+=======
+    "start-server-and-test": "^3.0.2",
+>>>>>>> origin/main
     "supertest": "^7.2.2"
   }
 }

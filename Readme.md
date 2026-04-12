@@ -141,29 +141,16 @@ https://github.com/cs4218/cs4218-2520-ecom-project-cs4218-2520-team19/actions/ru
 
 ## MS3 Workload Distribution
 
-### Teo Kim Han
-
-
-
----
-
-### Pawirunsiri Thanakorn
-
-
-
----
-
 ### Sun Zhiyuan Felix
 
 - **Spike Tests**
+  - `nft-tests/spikeTest/spike-test.js`
+  - Summaries in the same folder:
+    - `k6-spike-dashboard.html`
+    - `k6-spike-summary.json`
     
 ---
 
-### Varatharaju Mithuna
-
-
-
----
 
 ## 1. Project Introduction
 

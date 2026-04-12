@@ -226,7 +226,7 @@ describe("allOrdersController backend integration with routes", () => {
         const res = await request(app)
             .get("/api/v1/auth/all-orders")
             .set("Authorization", `${token}`)
-            .expect(401); // middleware should block
+            .expect(403); // middleware should block
         expect(res.body.message).toMatch( "UnAuthorized Access");
     });
 });
@@ -314,7 +314,7 @@ describe("orderStatusController backend integration with routes", () => {
             .put(`/api/v1/auth/order-status/${orderToUpdate._id}`)
             .set("Authorization", `${token}`)
             .send({ status: "Shipped" })
-            .expect(401); // middleware should block
+            .expect(403); // middleware should block
 
         expect(res.body.message).toMatch( "UnAuthorized Access");
     });

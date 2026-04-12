@@ -16,7 +16,7 @@ async function getAuthToken() {
     {
       name: "Test Admin",
       email: "test@example.com",
-      password: "test123",
+      password: "StrongPassword123!",
       phone: "1234567890",
       address: "Test Address",
       answer: "test"
@@ -30,7 +30,7 @@ async function getAuthToken() {
       "http://localhost:6060/api/v1/auth/login",
       {
         email: "test@example.com",
-        password: "test123"
+        password: "StrongPassword123!"
       }
     );
   } catch (error) {

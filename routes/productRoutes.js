@@ -17,6 +17,7 @@ import {
 } from "../controllers/productController.js";
 import { isAdmin, requireSignIn } from "../middlewares/authMiddleware.js";
 import formidable from "express-formidable";
+import { sanitizeRequestBody } from "../middlewares/sanitizeMiddleware.js";
 
 const router = express.Router();
 
@@ -26,6 +27,7 @@ router.post(
   requireSignIn,
   isAdmin,
   formidable(),
+  sanitizeRequestBody,
   createProductController
 );
 //routes
@@ -34,6 +36,7 @@ router.put(
   requireSignIn,
   isAdmin,
   formidable(),
+  sanitizeRequestBody,
   updateProductController
 );
 

@@ -7,7 +7,7 @@ export async function seedPlaywrightUser() {
     const user = await userModel.findOne({ email: "uitest@email.com" });
     if (user) return;
 
-    const hashedPassword = await hashPassword("password123");
+    const hashedPassword = await hashPassword("StrongPassword123!");
     await userModel.create({
         name: "uitest",
         email: "uitest@email.com",

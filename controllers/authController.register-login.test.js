@@ -3,7 +3,7 @@
 
 import { loginController, forgotPasswordController, testController, registerController } from "./authController";
 import userModel from "../models/userModel";
-import { hashPassword, comparePassword } from "../helpers/authHelper";
+import { hashPassword, comparePassword, checkPasswordStrength } from "../helpers/authHelper";
 import JWT from "jsonwebtoken";
 
 jest.mock('../models/userModel');
@@ -32,7 +32,7 @@ describe('registerController tests', () => {
     });
 
     afterEach(() => {
-        jest.clearAllMocks();
+        jest.resetAllMocks();
     });
 
     describe('validation tests', () => {
@@ -49,6 +49,16 @@ describe('registerController tests', () => {
 
         it.each(invalidReqList)('should send a response with status code 400 due to empty %s',
             async (field, invalidReq) => {
+                if (field === 'password') {
+                    checkPasswordStrength.mockReturnValueOnce({
+                        isPasswordValid: false,
+                        invalidPasswordReason: "Password is required",
+                    });
+                };
+                checkPasswordStrength.mockReturnValueOnce({
+                    isPasswordValid: true,
+                    invalidPasswordReason: null,
+                });
                 await registerController(invalidReq, res);
 
                 expect(res.status).toHaveBeenCalledWith(400);
@@ -60,6 +70,10 @@ describe('registerController tests', () => {
     });
 
     it('should send a response with status code 409 if duplicate email exists', async () => {
+        checkPasswordStrength.mockReturnValueOnce({
+            isPasswordValid: true,
+            invalidPasswordReason: null,
+        });
         // Mock findOne to return an existing user
         userModel.findOne.mockResolvedValue({...mockUser}); 
 
@@ -73,6 +87,10 @@ describe('registerController tests', () => {
     });
 
     it('should save the user with hashed password', async () => {
+        checkPasswordStrength.mockReturnValueOnce({
+            isPasswordValid: true,
+            invalidPasswordReason: null,
+        });
         userModel.findOne.mockResolvedValueOnce(null); // no existing user
         hashPassword.mockResolvedValue('hashedPassword'); // successful hash
         const updatedMockUser = {
@@ -99,6 +117,10 @@ describe('registerController tests', () => {
     });
 
     it('should send a response with status code 201 if user register successfully', async () => {
+        checkPasswordStrength.mockReturnValueOnce({
+            isPasswordValid: true,
+            invalidPasswordReason: null,
+        });
         userModel.findOne.mockResolvedValueOnce(null); // no existing user
         hashPassword.mockResolvedValue('hashedPassword'); // successful hash
         const updatedMockUser = {
@@ -121,6 +143,10 @@ describe('registerController tests', () => {
     });
     
     it('should send a response with status code 500 if an error occurred', async () => {
+        checkPasswordStrength.mockReturnValueOnce({
+            isPasswordValid: true,
+            invalidPasswordReason: null,
+        });
         jest.spyOn(console, 'log').mockImplementation(() => {});
         const error = new Error('No connection to database');
         userModel.findOne.mockRejectedValueOnce(error);
@@ -166,7 +192,7 @@ describe('loginController tests', () => {
     });
 
     afterEach(() => {
-        jest.clearAllMocks();
+        jest.resetAllMocks();
     });
 
     it('should return a response code of 400 for missing email', async () => {
@@ -307,10 +333,14 @@ describe('forgotPasswordController tests', () => {
     });
 
     afterEach(() => {
-        jest.clearAllMocks();
+        jest.resetAllMocks();
     });
 
     it('should send a response code of 400 for missing email', async () => {
+        checkPasswordStrength.mockReturnValueOnce({
+            isPasswordValid: true,
+            invalidPasswordReason: null,
+        });
         req.body.email = '';
 
         await forgotPasswordController(req, res);
@@ -323,6 +353,10 @@ describe('forgotPasswordController tests', () => {
     });
 
     it('should send a response code of 400 for missing answer', async () => {
+        checkPasswordStrength.mockReturnValueOnce({
+            isPasswordValid: true,
+            invalidPasswordReason: null,
+        });
         req.body.answer = '';
 
         await forgotPasswordController(req, res);
@@ -336,6 +370,10 @@ describe('forgotPasswordController tests', () => {
 
     it('should send a response code of 400 for missing new Password', async () => {
         req.body.newPassword = '';
+        checkPasswordStrength.mockReturnValueOnce({
+            isPasswordValid: false,
+            invalidPasswordReason: "New Password is required",
+        });
 
         await forgotPasswordController(req, res);
 
@@ -347,6 +385,10 @@ describe('forgotPasswordController tests', () => {
     });
 
     it('should send a response code of 404 for user not found', async () => {
+        checkPasswordStrength.mockReturnValueOnce({
+            isPasswordValid: true,
+            invalidPasswordReason: null,
+        });
         userModel.findOne.mockResolvedValueOnce(null);
 
         await forgotPasswordController(req, res);
@@ -360,6 +402,10 @@ describe('forgotPasswordController tests', () => {
 
     it('should hash the new password', async () => {
         const mockUser = { _id: '123' };
+        checkPasswordStrength.mockReturnValueOnce({
+            isPasswordValid: true,
+            invalidPasswordReason: null,
+        });
         userModel.findOne.mockResolvedValueOnce(mockUser);
         hashPassword.mockResolvedValueOnce('mockHashedPassword');
 
@@ -370,6 +416,10 @@ describe('forgotPasswordController tests', () => {
 
     it('should update the user password with the new hashed password', async () => {
         const mockUser = { _id: '123' };
+        checkPasswordStrength.mockReturnValueOnce({
+            isPasswordValid: true,
+            invalidPasswordReason: null,
+        });
         userModel.findOne.mockResolvedValueOnce(mockUser);
         hashPassword.mockResolvedValueOnce('mockHashedPassword');
         userModel.findByIdAndUpdate.mockResolvedValueOnce(mockUser);
@@ -383,6 +433,10 @@ describe('forgotPasswordController tests', () => {
 
     it('should send a response code of 200 if password change is successful', async () => {
         const mockUser = { _id: '123' };
+        checkPasswordStrength.mockReturnValueOnce({
+            isPasswordValid: true,
+            invalidPasswordReason: null,
+        });
         userModel.findOne.mockResolvedValueOnce(mockUser);
         hashPassword.mockResolvedValueOnce('mockHashedPassword');
         userModel.findByIdAndUpdate.mockResolvedValueOnce(mockUser);
@@ -397,6 +451,10 @@ describe('forgotPasswordController tests', () => {
     });
 
     it('should send a response code of 500 if an error occured', async () => {
+        checkPasswordStrength.mockReturnValueOnce({
+            isPasswordValid: true,
+            invalidPasswordReason: null,
+        });
         jest.spyOn(console, 'log').mockImplementation(() => {});
         const error = new Error('something unexpected happened');
         userModel.findOne.mockRejectedValueOnce(error);
@@ -416,7 +474,7 @@ describe('forgotPasswordController tests', () => {
 
 describe('testController tests', () => {
     afterEach(() => {
-        jest.clearAllMocks();
+        jest.resetAllMocks();
     });
 
     it('should send a response with status code 200 if no error occurred', () => {

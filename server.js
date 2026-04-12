@@ -7,6 +7,7 @@ import authRoutes from './routes/authRoute.js'
 import categoryRoutes from './routes/categoryRoutes.js'
 import productRoutes from './routes/productRoutes.js'
 import cors from "cors";
+import helmet from "helmet";
 
 // configure env
 dotenv.config();
@@ -16,10 +17,23 @@ connectDB();
 
 const app = express();
 
+app.disable("x-powered-by");
+
 //middlewares
 app.use(cors());
 app.use(express.json());
 app.use(morgan('dev'));
+app.use(helmet({
+    contentSecurityPolicy: {
+        directives: {
+            'default-src': ["'self'"],
+            'form-action': ["'self'"],
+            'frame-ancestors': ["'none'"],
+        }
+    },
+    strictTransportSecurity: false, // local development not using HTTPS
+    xPoweredBy: false,
+}));
 
 //routes
 app.use("/api/v1/auth", authRoutes);

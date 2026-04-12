@@ -5,10 +5,10 @@ import request from 'supertest';
 import express from 'express';
 import mongoose from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
-import userModel from "../models/userModel.js";
-import authRoutes from '../routes/authRoute.js';
-import categoryRoutes from '../routes/categoryRoutes.js';
-import { hashPassword } from "../helpers/authHelper.js";
+import userModel from "../../models/userModel.js";
+import authRoutes from '../../routes/authRoute.js';
+import categoryRoutes from '../../routes/categoryRoutes.js';
+import { hashPassword } from "../../helpers/authHelper.js";
 process.env.JWT_SECRET = process.env.JWT_SECRET || "testsecret";
 // First run of the test suite may take longer due to MongoDB Memory Server setup
 jest.setTimeout(30000);

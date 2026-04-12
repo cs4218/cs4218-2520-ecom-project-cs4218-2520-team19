@@ -55,10 +55,7 @@
     "jest-environment-jsdom": "^29.7.0",
     "mongodb-memory-server": "^11.0.1",
     "sonarqube-scanner": "^4.3.5",
-<<<<<<< HEAD
-=======
     "start-server-and-test": "^3.0.2",
->>>>>>> origin/main
     "supertest": "^7.2.2"
   }
 }

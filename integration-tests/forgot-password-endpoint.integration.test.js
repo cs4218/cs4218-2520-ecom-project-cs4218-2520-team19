@@ -22,7 +22,7 @@ const forgotPasswordRoute = '/api/v1/auth/forgot-password';
 let mongoServer;
 
 const createUser = async () => {
-        const hashedPassword = await hashPassword('password123');
+        const hashedPassword = await hashPassword('Password123!');
         const user = new userModel({
             name: 'Test User',
             email: 'test@example.com',
@@ -59,10 +59,10 @@ describe('Forgot Password Endpoint Integration Tests', () => {
         const res = await request(app).post(forgotPasswordRoute).send({
             email: 'test@example.com',
             answer: 'test answer',
-            newPassword: 'newpassword123'
+            newPassword: 'NewPassword123!'
         });
         const updatedUser = await userModel.findOne({ email: 'test@example.com' });
-        const isPasswordUpdated = await comparePassword('newpassword123', updatedUser.password);
+        const isPasswordUpdated = await comparePassword('NewPassword123!', updatedUser.password);
         
         expect(res.status).toBe(200);
         expect(res.body).toHaveProperty('success', true);
@@ -73,7 +73,7 @@ describe('Forgot Password Endpoint Integration Tests', () => {
     test('Should return 400 if email field is missing', async () => {
         const res = await request(app).post(forgotPasswordRoute).send({
             answer: 'test answer',
-            newPassword: 'newpassword123'
+            newPassword: 'NewPassword123!'
         });
 
         expect(res.status).toBe(400);
@@ -84,7 +84,7 @@ describe('Forgot Password Endpoint Integration Tests', () => {
     test('Should return 400 if answer field is missing', async () => {
         const res = await request(app).post(forgotPasswordRoute).send({
             email: 'test@example.com',
-            newPassword: 'newpassword123'
+            newPassword: 'NewPassword123!'
         });
 
         expect(res.status).toBe(400);
@@ -107,7 +107,7 @@ describe('Forgot Password Endpoint Integration Tests', () => {
         const res = await request(app).post(forgotPasswordRoute).send({
             email: 'nonexistent@example.com',
             answer: 'test answer',
-            newPassword: 'newpassword123'
+            newPassword: 'NewPassword123!'
         });
 
         expect(res.status).toBe(404);
@@ -122,7 +122,7 @@ describe('Forgot Password Endpoint Integration Tests', () => {
         const res = await request(app).post(forgotPasswordRoute).send({
             email: 'invalid-email@example.com',
             answer: 'test answer',
-            newPassword: 'newpassword123'
+            newPassword: 'NewPassword123!'
         });
 
         expect(res.status).toBe(404);
@@ -137,14 +137,47 @@ describe('Forgot Password Endpoint Integration Tests', () => {
         const res = await request(app).post(forgotPasswordRoute).send({
             email: 'test@example.com',
             answer: 'incorrect answer',
-            newPassword: 'newpassword123'
+            newPassword: 'NewPassword123!'
         });
         const updatedUser = await userModel.findOne({ email: 'test@example.com' });
-        const isPasswordUpdated = await comparePassword('newpassword123', updatedUser.password);
+        const isPasswordUpdated = await comparePassword('NewPassword123!', updatedUser.password);
 
         expect(res.status).toBe(404);
         expect(res.body).toHaveProperty('success', false);
         expect(res.body).toHaveProperty('message');
         expect(isPasswordUpdated).toBe(false);
+    });
+
+    // Teo Kim Han (A0273551E), MS3-Security Testing
+    describe('password strength should be enforced in forgot password endpoint', () => {
+        const weakPasswords = [
+            'Abcde1!',      // 7 chars — expected: "at least 8 characters"
+            'abcdef1!',     // expected: "at least 1 uppercase letter"
+            'ABCDEF1!',     // expected: "at least 1 lowercase letter"
+            'Abcdef!!',     // expected: "at least 1 number"
+            'Abcdef12',     // expected: "at least 1 special character"
+            '',             // 0 chars — expected: length or empty-string error
+        ];
+    
+        test.each(weakPasswords)(
+            'Should return 400 for weak password: %s',
+            async (pw) => {
+                const user = await createUser();
+                await user.save();
+    
+                const res = await request(app).post(forgotPasswordRoute).send({
+                    email: 'test@example.com',
+                    answer: 'test answer',
+                    newPassword: pw
+                });
+                const updatedUser = await userModel.findOne({ email: user.email });
+                const isPasswordUpdated = await comparePassword(pw, updatedUser.password);
+    
+                expect(res.status).toBe(400);
+                expect(res.body).toHaveProperty('success', false);
+                expect(res.body).toHaveProperty('message');
+                expect(isPasswordUpdated).toBe(false);
+            }
+        );
     });
 });

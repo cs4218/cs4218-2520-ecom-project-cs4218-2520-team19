@@ -263,7 +263,7 @@ describe("FLOW: Admin updates order → User views updated order", () => {
             .put(`/api/v1/auth/order-status/${orderToUpdate._id}`)
             .set("Authorization", token)
             .send({ status: "Shipped" })
-            .expect(401);
+            .expect(403);
 
         const orderInDb = await Order.findById(orderToUpdate._id);
         expect(orderInDb.status).toBe(orderToUpdate.status);

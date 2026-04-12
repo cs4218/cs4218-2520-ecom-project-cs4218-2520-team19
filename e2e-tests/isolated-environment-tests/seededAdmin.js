@@ -4,7 +4,7 @@
 export const seededAdmin = Object.freeze({
   name: 'Playwright Admin',
   email: 'uitestadmin@email.com',
-  password: 'password123',
+  password: 'StrongPassword123!',
   phone: '123456789',
   address: 'Playwright Test Address',
   answer: 'tennis',

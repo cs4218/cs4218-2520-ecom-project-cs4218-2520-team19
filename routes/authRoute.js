@@ -9,7 +9,7 @@ import {
   getAllOrdersController,
   orderStatusController,
 } from "../controllers/authController.js";
-import { isAdmin, requireSignIn } from "../middlewares/authMiddleware.js";
+import { isAdmin, requireSignIn, limiter } from "../middlewares/authMiddleware.js";
 
 //router object
 const router = express.Router();
@@ -19,7 +19,7 @@ const router = express.Router();
 router.post("/register", registerController);
 
 //LOGIN || POST
-router.post("/login", loginController);
+router.post("/login", limiter, loginController);
 
 //Forgot Password || POST
 router.post("/forgot-password", forgotPasswordController);

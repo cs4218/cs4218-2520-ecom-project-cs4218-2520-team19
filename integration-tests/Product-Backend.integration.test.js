@@ -11,6 +11,8 @@ process.env.JWT_SECRET = process.env.JWT_SECRET || "testsecret";
 let token;
 let mongoServer;
 
+jest.setTimeout(30000);// mongoDB server setup may take longer than default of 5s
+
 const app = express();
 app.use(express.json());
 app.use("/api/v1/product", productRoutes);

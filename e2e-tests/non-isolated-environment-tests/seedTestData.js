@@ -1,6 +1,6 @@
 import dotenv from 'dotenv'
 import { connectDB, disconnectDB } from "../../config/db.js";
-import { createTestUser } from "./test-user.js";
+import { createTestUser, createTestAdmin } from "./test-user.js";
 import { createTestData } from "./test-products.js";
 
 dotenv.config()
@@ -8,6 +8,7 @@ dotenv.config()
 const seed = async () => {
   await connectDB();
   await createTestUser();
+  await createTestAdmin();
   await createTestData();
   await disconnectDB();
 };

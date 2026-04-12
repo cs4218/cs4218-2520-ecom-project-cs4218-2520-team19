@@ -58,7 +58,7 @@ const ProductDetails = () => {
     );
   }
 
-  const addToCart = () => {
+  const addToCart = (product) => {
     setCart([...cart, product]);
     localStorage.setItem('cart', JSON.stringify([...cart, product]));
     toast.success('Item Added to cart');
@@ -89,7 +89,7 @@ const ProductDetails = () => {
             })}
           </h6>
           <h6>Category : {product?.category?.name}</h6>
-          <button className="btn btn-dark ms-1" onClick={addToCart}>
+          <button className="btn btn-dark ms-1" onClick={() => addToCart(product)}>
             ADD TO CART
           </button>
         </div>
@@ -128,7 +128,7 @@ const ProductDetails = () => {
                   >
                     More Details
                   </button>
-                  <button className="btn btn-dark ms-1" onClick={addToCart}>
+                  <button className="btn btn-dark ms-1" onClick={() => addToCart(p)}>
                     ADD TO CART
                   </button>
                 </div>

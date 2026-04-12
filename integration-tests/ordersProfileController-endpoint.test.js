@@ -12,6 +12,8 @@ import Category from "../models/categoryModel";
 import { updateProfileController, getOrdersController, getAllOrdersController, orderStatusController } from "../controllers/authController";
 import {comparePassword, hashPassword} from "../helpers/authHelper";
 
+jest.setTimeout(30000); // mongoDB server setup may take longer than default of 5s
+
 let mongoServer;
 
 // Set up in-memory MongoDB server before running tests and connect mongoose to it

@@ -151,11 +151,12 @@ describe('Forgot Password Endpoint Integration Tests', () => {
     // Teo Kim Han (A0273551E), MS3-Security Testing
     describe('password strength should be enforced in forgot password endpoint', () => {
         const weakPasswords = [
-            'Ab1!',              // boundary: exactly 7 chars (one below minimum)
-            'alllowercase1!',    // missing uppercase
-            'ALLUPPERCASE1!',    // missing lowercase
-            'NoSpecialChars1',   // missing special char
-            'NoDigitsHere!',     // missing digit
+            'Abcde1!',      // 7 chars — expected: "at least 8 characters"
+            'abcdef1!',     // expected: "at least 1 uppercase letter"
+            'ABCDEF1!',     // expected: "at least 1 lowercase letter"
+            'Abcdef!!',     // expected: "at least 1 number"
+            'Abcdef12',     // expected: "at least 1 special character"
+            '',             // 0 chars — expected: length or empty-string error
         ];
     
         test.each(weakPasswords)(

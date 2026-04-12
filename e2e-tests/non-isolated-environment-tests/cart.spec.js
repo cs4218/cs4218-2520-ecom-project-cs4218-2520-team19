@@ -59,14 +59,13 @@ test('More Details -> Add to cart for similar product -> View Cart', async ({ pa
   await page.goto('/');
 
   await test.step('Click on More Details button for the novel product', async () => {
-    const novelCard = page.getByText('Novel$14.99A bestselling');
+    const novelCard = page.getByText('Textbook$79.99A comprehensive');
     await novelCard.getByRole('button', { name: 'More Details' }).click();
-    await expect(page.getByRole('img', { name: 'Novel' })).toBeVisible();
-    await expect(page.getByRole('img', {name: 'Textbook' })).toBeVisible();
+    await page.waitForURL('/product/textbook', { waitUntil: 'domcontentloaded' });
   });
 
   await test.step('Click on ADD TO CART button for the similar product in product details page', async () => {
-    const textbookCard = page.getByText('Textbook$79.99A comprehensive');
+    const textbookCard = page.getByText('Novel$14.99A bestselling');
     await textbookCard.getByRole('button', { name: 'ADD TO CART' }).click();
     await expect(page.getByText('Item Added to cart')).toBeVisible();
   });

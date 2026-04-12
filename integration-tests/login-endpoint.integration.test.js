@@ -8,6 +8,7 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 import userModel from "../models/userModel.js";
 import authRoutes from '../routes/authRoute.js';
 import { hashPassword } from "../helpers/authHelper.js";
+import { limiter } from "../middlewares/authMiddleware.js";
 process.env.JWT_SECRET = process.env.JWT_SECRET || "testsecret";
 // First run of the test suite may take longer due to MongoDB Memory Server setup
 jest.setTimeout(30000);
@@ -22,7 +23,7 @@ const loginRoute = '/api/v1/auth/login';
 let mongoServer;
 
 const createUser = async () => {
-    const hashedPassword = await hashPassword('password123');
+    const hashedPassword = await hashPassword('StrongPassword123!');
     const user = new userModel({
         name: 'Test User',
         email: 'test@example.com',
@@ -58,7 +59,7 @@ describe('Login Endpoint Integration Tests', () => {
 
         const res = await request(app).post(loginRoute).send({
             email: 'test@example.com',
-            password: 'password123'
+            password: 'StrongPassword123!'
         });
 
         expect(res.status).toBe(200);
@@ -80,7 +81,7 @@ describe('Login Endpoint Integration Tests', () => {
         await user.save();
 
         const res = await request(app).post(loginRoute).send({
-            password: 'password123'
+            password: 'StrongPassword123!'
         });
 
         expect(res.status).toBe(400);
@@ -128,6 +129,10 @@ describe('Login Endpoint Integration Tests', () => {
 
     // Teo Kim Han (A0273551E), MS3-Security Testing
     describe('Rate Limiting Tests', () => {
+        beforeEach(async () => {
+            await limiter.resetKey('test@example.com');
+        });
+
         test('Invalid email should not count towards rate limit', async () => {
             // Make 3 failed login attempts with invalid email
             for (let i = 0; i < 3; i++) {
@@ -145,7 +150,6 @@ describe('Login Endpoint Integration Tests', () => {
             expect(res.body).toHaveProperty('success', false);
             expect(res.body).toHaveProperty('message');
         });
-
 
         test('Should return 429 after exceeding rate limit for password', async () => {
             const user = await createUser();
@@ -166,6 +170,126 @@ describe('Login Endpoint Integration Tests', () => {
 
             expect(res.status).toBe(429);
             expect(res.body).toHaveProperty('message', 'Too many requests, please try again later.');
+        });
+
+        test('Rate limit counter should reset after successful login', async () => {
+            const user = await createUser();
+            await user.save();
+
+            // Make 2 failed attempts (just under the limit)
+            for (let i = 0; i < 2; i++) {
+                await request(app).post(loginRoute).send({
+                    email: 'test@example.com',
+                    password: 'WrongPassword123!'
+                });
+            }
+
+            // Successful login should reset counter
+            await request(app).post(loginRoute).send({
+                email: 'test@example.com',
+                password: 'StrongPassword123!'
+            });
+
+            // Should not be rate limited on next failed attempt
+            const res = await request(app).post(loginRoute).send({
+                email: 'test@example.com',
+                password: 'WrongPassword123!'
+            });
+
+            expect(res.status).toBe(401); // Not 429
+        });
+
+        test('Rate limit should be scoped per email, not globally', async () => {
+            const user = await createUser();
+            await user.save();
+            const otherUser = new userModel({
+                name: 'Other User',
+                email: 'other@example.com',
+                password: 'StrongPassword123!',
+                phone: '0987654321',
+                address: '456 Other St',
+                answer: 'other answer',
+            });
+            await otherUser.save();
+
+            // Exhaust rate limit for otherUser
+            for (let i = 0; i < 3; i++) {
+                await request(app).post(loginRoute).send({
+                    email: 'other@example.com',
+                    password: 'WrongPassword123!'
+                });
+            }
+
+            // test@example.com should NOT be affected
+            const res = await request(app).post(loginRoute).send({
+                email: 'test@example.com',
+                password: 'WrongPassword123!'
+            });
+
+            expect(res.status).toBe(401); // Not 429
+        });
+
+        test('Should allow the attempt exactly at the limit boundary (3rd attempt)', async () => {
+            const user = await createUser();
+            await user.save();
+
+            for (let i = 0; i < 2; i++) {
+                await request(app).post(loginRoute).send({
+                    email: 'test@example.com',
+                    password: 'WrongPassword123!'
+                });
+            }
+
+            // 3rd attempt — still within limit, should return 401 not 429
+            const res = await request(app).post(loginRoute).send({
+                email: 'test@example.com',
+                password: 'WrongPassword123!'
+            });
+
+            expect(res.status).toBe(401);
+        });
+
+        test('Rate limit response should contain retry-after information', async () => {
+            const user = await createUser();
+            await user.save();
+
+            for (let i = 0; i < 3; i++) {
+                await request(app).post(loginRoute).send({
+                    email: 'test@example.com',
+                    password: 'WrongPassword123!'
+                });
+            }
+
+            const res = await request(app).post(loginRoute).send({
+                email: 'test@example.com',
+                password: 'WrongPassword123!'
+            });
+
+            expect(res.status).toBe(429);
+            expect(res.headers).toHaveProperty('retry-after'); // Important for clients
+            expect(res.body).toHaveProperty('message', 'Too many requests, please try again later.');
+        });
+
+        test('Rate limit should expire after the cooldown window', async () => {
+            const user = await createUser();
+            await user.save();
+
+            for (let i = 0; i < 3; i++) {
+                await request(app).post(loginRoute).send({
+                    email: 'test@example.com',
+                    password: 'WrongPassword123!'
+                });
+            }
+
+            // Simulate window expiry by resetting the key
+            await limiter.resetKey('test@example.com');
+
+            const res = await request(app).post(loginRoute).send({
+                email: 'test@example.com',
+                password: 'WrongPassword123!'
+            });
+
+            expect(res.status).toBe(401); // Not 429 — window has reset
         });
     });
 });

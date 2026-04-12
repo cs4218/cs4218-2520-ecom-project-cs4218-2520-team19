@@ -125,21 +125,30 @@ https://github.com/cs4218/cs4218-2520-ecom-project-cs4218-2520-team19/actions/ru
 - **UI Tests**
   - Admin category CRUD
   - User cannot checkout scenarios
-    
+
 ---
 
 ### Varatharaju Mithuna
+
 - **Integration Tests**
   - Frontend
     - Dashboard, Profile, View orders
   - Backend
-    - getOrders Controller, getAllOrders Controller, updateOrderStatus Controller, updateProfile controller 
+    - getOrders Controller, getAllOrders Controller, updateOrderStatus Controller, updateProfile controller
 - **UI Tests**
   - Filter related (price and categroy)
 
 ---
 
 ## MS3 Workload Distribution
+
+### Teo Kim Han
+
+- **Security Tests**
+  - `nft-tests/security/admin-access.test.js`
+  - `nft-tests/security/screenshots/Sec-Testing.png`
+  - update security tests to `helpers/authHelper.test.js`
+  - update security tests to `integration-tests/forgot-password-endpoint.integration.test.js`, `register-endpoint.integration.test.js`, `login-endpoint.integration.test.js`
 
 ### Sun Zhiyuan Felix
 
@@ -148,9 +157,8 @@ https://github.com/cs4218/cs4218-2520-ecom-project-cs4218-2520-team19/actions/ru
   - Summaries in the same folder:
     - `k6-spike-dashboard.html`
     - `k6-spike-summary.json`
-    
----
 
+---
 
 ## 1. Project Introduction
 

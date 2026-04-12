@@ -125,15 +125,16 @@ https://github.com/cs4218/cs4218-2520-ecom-project-cs4218-2520-team19/actions/ru
 - **UI Tests**
   - Admin category CRUD
   - User cannot checkout scenarios
-    
+
 ---
 
 ### Varatharaju Mithuna
+
 - **Integration Tests**
   - Frontend
     - Dashboard, Profile, View orders
   - Backend
-    - getOrders Controller, getAllOrders Controller, updateOrderStatus Controller, updateProfile controller 
+    - getOrders Controller, getAllOrders Controller, updateOrderStatus Controller, updateProfile controller
 - **UI Tests**
   - Filter related (price and categroy)
 
@@ -148,9 +149,14 @@ https://github.com/cs4218/cs4218-2520-ecom-project-cs4218-2520-team19/actions/ru
   - Summaries in the same folder:
     - `k6-spike-dashboard.html`
     - `k6-spike-summary.json`
-    
----
 
+### Pawirunsiri Thanakorn
+
+- **Load Tests**
+  - `nft-tests/loadTest/load-test.jmx`
+  - Report can be found in the same folder
+
+---
 
 ## 1. Project Introduction
 

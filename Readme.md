@@ -160,6 +160,12 @@ https://github.com/cs4218/cs4218-2520-ecom-project-cs4218-2520-team19/actions/ru
     - `k6-spike-dashboard.html`
     - `k6-spike-summary.json`
 
+### Pawirunsiri Thanakorn
+
+- **Load Tests**
+  - `nft-tests/loadTest/load-test.jmx`
+  - Report can be found in the same folder
+
 ---
 
 ## 1. Project Introduction

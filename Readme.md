@@ -165,6 +165,11 @@ https://github.com/cs4218/cs4218-2520-ecom-project-cs4218-2520-team19/actions/ru
 - **Load Tests**
   - `nft-tests/loadTest/load-test.jmx`
   - Report can be found in the same folder
+ 
+### Varatharaju Mithuna
+
+- **Stress Tests**
+  - More information at `nft-tests/stressTest/README.md`
 
 ---
 
